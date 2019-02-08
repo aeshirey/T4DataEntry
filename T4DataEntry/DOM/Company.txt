@@ -1,0 +1,4 @@
+CompanyId:Guid
+Name:string
+StockSymbol:string
+Founded:DateTime

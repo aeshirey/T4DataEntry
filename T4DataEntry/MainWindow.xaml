@@ -1,0 +1,153 @@
+﻿
+<Window x:Class="T4DataEntry.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:T4DataEntry"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+	<TabControl>
+        <TabItem x:Name="tabCompany" Header="Company" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
+    <Grid Grid.Row="0" Background="#FFE5E5E5">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#FFE5E5E5">
+            <DataGrid x:Name="dgCompany" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Company_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
+                    <DataGridTextColumn Header="StockSymbol" IsReadOnly="True" Binding="{Binding StockSymbol}" Width="1*" />
+                    <DataGridTextColumn Header="Founded" IsReadOnly="True" Binding="{Binding Founded}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1" Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="CompanyId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbCompany_CompanyId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbCompany_Name" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="StockSymbol" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbCompany_StockSymbol" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="Founded" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dtCompany_Founded" Margin="5,5,5,5" />
+
+            <Button Grid.Row="4" Grid.Column="1" x:Name="btnCompany_Save" Margin="5,5,5,5" Content="Save" Click="InsertCompany" />
+        </Grid>
+        </Grid>
+    </TabItem>
+
+<TabItem x:Name="tabEmployee" Header="Employee" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
+    <Grid Grid.Row="0" Background="#FFE5E5E5">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#FFE5E5E5">
+            <DataGrid x:Name="dgEmployee" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Employee_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Title" IsReadOnly="True" Binding="{Binding Title}" Width="1*" />
+                    <DataGridTextColumn Header="OfficeNumber" IsReadOnly="True" Binding="{Binding OfficeNumber}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1" Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="EmployeeId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbEmployee_EmployeeId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="PersonId" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbEmployee_PersonId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="CompanyId" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbEmployee_CompanyId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="Title" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="tbEmployee_Title" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="OfficeNumber" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="tbEmployee_OfficeNumber" Margin="5,5,5,5" IsEditable="True" />
+
+            <Button Grid.Row="5" Grid.Column="1" x:Name="btnEmployee_Save" Margin="5,5,5,5" Content="Save" Click="InsertEmployee" />
+        </Grid>
+        </Grid>
+    </TabItem>
+
+<TabItem x:Name="tabPerson" Header="Person" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
+    <Grid Grid.Row="0" Background="#FFE5E5E5">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#FFE5E5E5">
+            <DataGrid x:Name="dgPerson" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
+                    <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
+                    <DataGridTextColumn Header="Hometown" IsReadOnly="True" Binding="{Binding Hometown}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1" Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="PersonId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbPerson_PersonId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbPerson_Name" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="Age" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbPerson_Age" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="Hometown" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="tbPerson_Hometown" Margin="5,5,5,5" IsEditable="True" />
+
+            <Button Grid.Row="4" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="InsertPerson" />
+        </Grid>
+        </Grid>
+    </TabItem>
+
+		        
+	</TabControl>
+    </Grid>
+</Window>
