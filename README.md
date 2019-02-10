@@ -24,3 +24,17 @@ Relevant notes on building your schema:
 * In the case where an ID column matches its own table (eg, `CompanyId` within the `Company` table), it is treated as the primary key and is not currently editable.
 * Valid column types are `string`, `int`, `int?`, `Guid`, `Guid?`, `bool`, `bool?`, `DateTime`, and `DateTime?`.
 * `FOREIGN KEY` constraints are not currently added.
+
+## Display of foreign keys
+When making references between tables, column names starting with <kbd>*</kbd> are used in the UI to give an object reference a displayable name. For example, if the Company table is defined as follows:
+
+	CompanyId:Guid
+	*Name:string
+	*StockSymbol:string
+	Founded:DateTime
+
+Then any references to a Company (eg, `Employee.CompanyId`) in the UI will display the combination of these columns.
+
+If none are explicitly specified and a <kbd>Name</kbd> column is present, it will be used. If no <kbd>Name</kbd> column exists, then the primary key will be used (ie, `Employee.EmployeeId`). If no primary key exists, then the underlying object representation (eg, `T4DataEntry.Employee`) is used.
+
+![UI display of foreign keys](https://github.com/aeshirey/T4DataEntry/blob/images/_images/isDisplayable.png)
