@@ -1,0 +1,415 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="TTCommon.t4" #>
+<#@ output extension=".xaml.cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using SQLite;
+
+<# var tables = GetTables(); #>
+namespace T4DataEntry
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+		public UserDB UserDB;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+
+			UserDB = new UserDB();
+
+			// load all records
+			<# foreach(var table in tables)
+			{
+				WriteLine($"    Load{table.Key}();");
+			}#>
+        }
+		<#
+		PushIndent("    ");
+		PushIndent("    ");
+		#>
+    
+	
+	#region Load data methods
+	<#
+	PushIndent("    ");
+	foreach (var table in tables)
+	{
+		WriteLine($"private void Load{table.Key}()");
+		WriteLine("{");
+		PushIndent("    ");
+		
+		WriteLine($"// remove all {table.Key} entries from its DataGrid and pull the new set from the database");
+		WriteLine($"dg{table.Key}.Items.Clear();");
+		WriteLine($"var records = UserDB.Table<{table.Key}>().ToList();");
+		WriteLine("");
+
+		WriteLine("// add all records back into the DataGrid");
+		WriteLine($"records.ForEach(r => dg{table.Key}.Items.Add(r));");
+
+
+		foreach (var column in table.Value)
+		{
+			if (column.IsPrimaryKey)
+			{
+			//WriteLine("// is id:");
+				// any other tables that reference this id will have a ComboBox that needs to be updated
+				foreach(var otherTable in tables)
+				{
+					if (otherTable.Key == table.Key) continue;
+
+					foreach (var otherColumn in otherTable.Value)
+					{
+						if (otherColumn.Name == column.Name)
+						{
+							// update the referenced table
+							WriteLine($"tb{otherTable.Key}_{otherColumn.Name}.ItemsSource = records;");
+						}
+					}
+				}
+			}
+			else
+			{
+				// populate editable fields within this tab
+				switch (column.Type)
+				{
+					case "DateTime":
+					case "bool":
+						break;
+					default:
+						WriteLine($"tb{table.Key}_{column.Name}.ItemsSource = records.Select(r => r.{column.Name}).ToList();");
+						break;
+				}
+			}
+		}
+
+		
+		PopIndent();
+		WriteLine("}");
+	}
+	PopIndent();
+	#>
+	#endregion
+
+
+
+	
+	#region Events
+	// https://stackoverflow.com/questions/10667002/
+	private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+	{
+		if (sender != null)
+		{
+			DataGrid grid = sender as DataGrid;
+			if (grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+			{
+				DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+				if (!dgr.IsMouseOver)
+				{
+					(dgr as DataGridRow).IsSelected = false;
+				}
+			}
+		}        
+	}
+
+	#region DataGrid selection changed
+	<#
+	PushIndent("    ");
+	foreach (var table in tables)
+	{
+		WriteLine($"private void {table.Key}_SelectionChanged(object sender, SelectionChangedEventArgs e)");
+		WriteLine("{");
+		PushIndent("    ");
+
+		WriteLine($"// get the {table.Key} object");
+		WriteLine($"if (e.AddedItems.Count == 0)");
+		WriteLine("{");
+		PushIndent("    ");
+		foreach(var column in table.Value)
+		{
+			switch(column.Type)
+			{
+				case "string":
+					WriteLine($"tb{table.Key}_{column.Name}.Text = default({column.Type});");
+					break;
+				case "int":
+				case "int?":
+				case "Guid":
+				case "Guid?":
+					WriteLine($"tb{table.Key}_{column.Name}.Text = string.Empty;");
+					break;
+				case "DateTime":
+					WriteLine($"dt{table.Key}_{column.Name}.SelectedDate = DateTime.Today;");
+					break;
+				case "bool":
+					WriteLine($"cb{table.Key}_{column.Name}.IsChecked = false;");
+					break;
+				default:
+					throw new Exception("Unhandled type: " + column.Type);
+			}
+		}
+		PopIndent();
+		WriteLine("}");
+		WriteLine("else");
+		WriteLine("{");
+
+		PushIndent("    ");
+		string instance = table.Key.ToLower();
+		WriteLine($"{table.Key} {instance} = e.AddedItems[0] as {table.Key};");
+		foreach(var column in table.Value)
+		{
+			if (column.IsPrimaryKey)
+			{
+				Write($"tb{table.Key}_{column.Name}.Text = {instance}.{column.Name}");
+				WriteLine(column.Type == "string" ? ";" : ".ToString();");
+			}
+			else if (column.IsId)
+			{
+				WriteLine($"foreach (var item in tb{table.Key}_{column.Name}.Items)");
+				WriteLine("{");
+				WriteLine($"   if ((item as {column.Name.Replace("Id", "")}).{column.Name} == {instance}.{column.Name})");
+				WriteLine($"      tb{table.Key}_{column.Name}.SelectedItem = item;");
+				//WriteLine($"   if (item == tb{table.Key}_{column.Name}.SelectedItem) continue;");
+				WriteLine("}");
+			}
+			else
+			{
+				switch(column.Type)
+				{
+					case "string":
+						WriteLine($"tb{table.Key}_{column.Name}.Text = {table.Key.ToLower()}.{column.Name};");
+						break;
+					case "int":
+					case "int?":
+						WriteLine($"tb{table.Key}_{column.Name}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+						break;
+					case "Guid":
+					case "Guid?":
+						WriteLine($"tb{table.Key}_{column.Name}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+						break;
+					case "DateTime":
+						WriteLine($"dt{table.Key}_{column.Name}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
+						break;
+					case "bool":
+						WriteLine($"cb{table.Key}_{column.Name}.IsChecked = {table.Key.ToLower()}.{column.Name};");
+						break;
+					default:
+						throw new Exception("Unhandled type: " + column.Type);
+				}
+			}
+		}
+		PopIndent();
+		WriteLine("}");
+
+		PopIndent();
+		WriteLine("}");
+	}
+	PopIndent();
+	#>
+	#endregion
+
+
+
+
+	#region Save button clicked (update/insert records)
+<#
+	foreach (var table in tables)
+	{
+		var tableName = table.Key;
+		var columns = table.Value;
+
+		WriteLine($"private void {tableName}_Click(object sender, RoutedEventArgs e)");
+		WriteLine("{");
+		PushIndent("    ");
+			
+		if (columns.Any(c => c.Type == "int?" && !c.IsPrimaryKey))
+			WriteLine("int i;");
+		if (columns.Any(c => c.Type == "Guid?" && !c.IsPrimaryKey))
+			WriteLine("Guid g;");
+
+		WriteLine($"// read each {tableName} column from its individual controls");
+		foreach (var column in columns)
+		{
+			if (column.IsPrimaryKey)
+			{
+				Write($"{column.Type} _{column.Name} = ");	
+				switch (column.Type)
+				{
+					case "string":
+						WriteLine($"tb{table.Key}_{column.Name}.Text;");
+						break;
+					case "int?":
+						WriteLine($"default({column.Type});");		
+						break;
+					case "Guid":
+					case "Guid?":
+						// generate a guid
+						WriteLine("Guid.NewGuid();");
+						break;
+					case "int":
+						WriteLine("int.Parse(tb{table.Key}_{column.Name}.Text);");
+						break;
+					default:
+						break;
+				}
+			}
+			else if (column.IsId)
+			{
+				// points to something else. get the object's id
+				// for Guid? reference columns, there may be no selection and therefore no .SelectedItem.
+				// in this case, use the null-coalescing operator ("?.") to qualify the dereference.
+				// eg, "var _PersonId = (dbCar_PersonId.SelectedItem as Person)?.PersonId;"
+				var coalesce = column.Type == "Guid?" ? "?" : "";
+				WriteLine($"var _{column.Name} = (tb{table.Key}_{column.Name}.SelectedItem as {column.Name.Replace("Id", string.Empty)}){coalesce}.{column.Name};");
+			}
+			else
+			{
+				switch (column.Type)
+				{
+					case "bool?":
+						WriteLine($"bool? _{column.Name} = cb{tableName}_{column.Name}.IsChecked;");
+						break;
+					case "bool":
+						WriteLine($"bool _{column.Name} = cb{tableName}_{column.Name}.IsChecked ?? false;");
+						break;
+					case "DateTime?":
+						WriteLine($"DateTime? _{column.Name} = dt{tableName}_{column.Name}.SelectedDate;");
+						break;
+					case "DateTime":
+						WriteLine($"DateTime _{column.Name} = dt{tableName}_{column.Name}.SelectedDate ?? DateTime.MinValue;");
+						break;
+					case "int?":
+						WriteLine($"int? _{column.Name} = int.TryParse(tb{tableName}_{column.Name}.Text, out i) ? i : (int?)null;");
+						break;
+					case "int":
+						WriteLine($"int _{column.Name} = int.Parse(tb{tableName}_{column.Name}.Text);");
+						break;
+					case "Guid?":
+						WriteLine($"Guid? _{column.Name} = Guid.TryParse(tb{tableName}_{column.Name}.Text, out g) ? g : (Guid?)null;");
+						break;
+					case "Guid":
+						WriteLine($"Guid _{column.Name} = Guid.Parse(tb{tableName}_{column.Name}.Text);");
+						break;
+					case "string":
+						WriteLine($"string _{column.Name} = tb{tableName}_{column.Name}.Text;");
+						break;
+				}
+			}
+		}
+
+		WriteLine("");
+		WriteLine($"var record = new {tableName}");
+		WriteLine("{");
+		PushIndent("    ");
+
+		foreach(var column in columns)
+		{
+			WriteLine($"{column.Name} = _{column.Name},");
+		}
+
+		PopIndent();
+		WriteLine("};");
+		WriteLine("");
+		WriteLine("UserDB.InsertOrReplace(record);");
+		WriteLine($"Load{table.Key}();");
+
+		PopIndent();
+		WriteLine("}");
+
+		WriteLine("");
+	}
+
+	PopIndent();
+	#>
+	#endregion
+#endregion
+
+	}
+
+	#region Generated classes for the object model
+	<#
+	PushIndent("    ");
+	foreach (var table in tables)
+	{
+		WriteLine($"public class {table.Key}");
+		WriteLine("{");
+		
+		PushIndent("    ");
+		foreach (var column in table.Value)
+		{
+			if (column.IsPrimaryKey)
+			{
+				WriteLine("[PrimaryKey]");
+			}
+
+			WriteLine($"public {column.Type} {column.Name} {{ get; set; }}");
+		}
+
+		// friendly name to display?
+		if (table.Value.Any(c => c.IsDisplayable))
+		{
+			var x = string.Join(", ", table.Value
+				.Where(c => c.IsDisplayable)
+				.Select(c => $"{c.Name}={{{c.Name}}}"));
+			WriteLine($"public override string ToString() => $\"{table.Key}({x})\";");
+		}
+		else if (table.Value.Any(c => c.Name == "Name"))
+		{
+			WriteLine("public override string ToString() => Name;");
+		}
+
+		PopIndent();
+
+		
+		WriteLine("}");
+		WriteLine("");
+	}
+	PopIndent();
+	PopIndent();
+	#>
+	#endregion
+
+	
+
+	public class UserDB : SQLiteConnection
+    {
+        public const string DatabaseFile = @"data.sqlite";
+        public static SQLiteConnection DbConnection;
+        public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
+        {
+<#
+		PushIndent("    ");
+		PushIndent("    ");
+		PushIndent("    ");
+		foreach (var table in tables)
+		{
+			WriteLine($"CreateTable<{table.Key}>();");
+		}
+		PopIndent();
+		PopIndent();
+		PopIndent();
+		#>
+            Commit();
+        }
+	}
+}

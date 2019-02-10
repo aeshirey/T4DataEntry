@@ -61,16 +61,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MainWindowCs1.xaml.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MainWindowCs.tt</DependentUpon>
+    </Compile>
     <Compile Include="SQLite.cs" />
     <Compile Include="SQLiteAsync.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindowXamlCs.xaml.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MainWindowXamlCs.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -101,6 +101,7 @@
     <Resource Include="DOM\Company.txt" />
     <Resource Include="DOM\Employee.txt" />
     <Resource Include="DOM\Person.txt" />
+    <Resource Include="DOM\Car.txt" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -109,9 +110,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MainWindow.xaml</LastGenOutput>
     </Content>
-    <Content Include="MainWindowXamlCs.tt">
+    <Content Include="MainWindowCs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MainWindowXamlCs.xaml.cs</LastGenOutput>
+      <LastGenOutput>MainWindowCs1.xaml.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

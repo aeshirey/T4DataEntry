@@ -23,9 +23,10 @@ public Dictionary<string, List<Column>> GetTables()
 		{
 			var col = new Column
 			{
-				Name = c[0],
+				Name = c[0].Replace("*", string.Empty),
 				Type = c[1],
-				IsPrimaryKey = c[0] == tableName + "Id"
+				IsPrimaryKey = c[0] == tableName + "Id",
+				IsDisplayable = c[0].StartsWith("*")
 			};
 
 			tables[tableName].Add(col);
@@ -46,15 +47,9 @@ public class Column
 	public string Name;
 	public string Type;
 	public bool IsPrimaryKey;
+
+	public bool IsDisplayable;
 	
 	public bool IsId {get => Name.EndsWith("Id"); }
-
-	public string CSType
-	{
-		get
-		{
-			return Type == "string" || IsPrimaryKey ? Type : Type + "?";
-		}
-	}
 }
 #>

@@ -44,7 +44,7 @@
 			WriteLine("    <DataGrid.Columns>");
 			foreach (var column in table.Value)
 			{
-				if (column.Name.EndsWith("Id"))
+				if (column.IsId)
 					continue;
 
 				WriteLine($"        <DataGridTextColumn Header=\"{column.Name}\" IsReadOnly=\"True\" Binding=\"{{Binding {column.Name}}}\" Width=\"1*\" />");
@@ -77,21 +77,35 @@
 			PopIndent();
 
 			var row = 0;
+			// Create the data entry elements for each column
 			foreach (var column in table.Value)
 			{
 				WriteLine($"    <Label Content=\"{column.Name}\" Grid.Row=\"{row}\" Grid.Column=\"0\" Margin=\"{Margin},{Margin},{Margin},{Margin}\"/>");
 
-				if (column.Type == "DateTime")
-					WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"dt{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
-				else if (column.Type == "bool")
-					WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"cb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+				if (column.IsPrimaryKey)
+				{
+					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"tb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{column.Type == "string"}\" />");
+				}
 				else
-					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"tb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+				{
+					if (column.Type == "DateTime")
+					{
+						WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"dt{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+					}
+					else if (column.Type == "bool")
+					{
+						WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"cb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+					}
+					else
+					{
+						WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"tb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+					}
+				}
 				WriteLine("");
 				row++;
 			}
 
-			WriteLine($"    <Button Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"btn{table.Key}_Save\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" Content=\"Save\" Click=\"Insert{table.Key}\" />");
+			WriteLine($"    <Button Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"btn{table.Key}_Save\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" Content=\"Save\" Click=\"{table.Key}_Click\" />");
 				
 
 				

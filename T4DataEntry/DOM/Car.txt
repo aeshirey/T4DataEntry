@@ -1,0 +1,6 @@
+﻿CarId:string
+*Make:string
+*Model:string
+Year:int
+PersonId:Guid?
+CompanyId:Guid?
