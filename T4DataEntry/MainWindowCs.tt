@@ -88,6 +88,10 @@ namespace T4DataEntry
 					}
 				}
 			}
+			else if (column.IsId)
+			{
+				// nothing -- id columns are taken care of by other table references
+			}
 			else
 			{
 				// populate editable fields within this tab

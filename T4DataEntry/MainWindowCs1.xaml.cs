@@ -50,8 +50,6 @@ namespace T4DataEntry
                 tbCar_Make.ItemsSource = records.Select(r => r.Make).ToList();
                 tbCar_Model.ItemsSource = records.Select(r => r.Model).ToList();
                 tbCar_Year.ItemsSource = records.Select(r => r.Year).ToList();
-                tbCar_PersonId.ItemsSource = records.Select(r => r.PersonId).ToList();
-                tbCar_CompanyId.ItemsSource = records.Select(r => r.CompanyId).ToList();
             }
             private void LoadCompany()
             {
@@ -74,8 +72,6 @@ namespace T4DataEntry
 
                 // add all records back into the DataGrid
                 records.ForEach(r => dgEmployee.Items.Add(r));
-                tbEmployee_PersonId.ItemsSource = records.Select(r => r.PersonId).ToList();
-                tbEmployee_CompanyId.ItemsSource = records.Select(r => r.CompanyId).ToList();
                 tbEmployee_Title.ItemsSource = records.Select(r => r.Title).ToList();
                 tbEmployee_OfficeNumber.ItemsSource = records.Select(r => r.OfficeNumber).ToList();
             }
@@ -333,7 +329,7 @@ namespace T4DataEntry
             public string Name { get; set; }
             public string StockSymbol { get; set; }
             public DateTime Founded { get; set; }
-            public override string ToString() => Name;
+            public override string ToString() => $"Company(Name={Name}, StockSymbol={StockSymbol})";
         }
 
         public class Employee
@@ -344,6 +340,7 @@ namespace T4DataEntry
             public Guid CompanyId { get; set; }
             public string Title { get; set; }
             public int OfficeNumber { get; set; }
+            public override string ToString() => $"Employee(EmployeeId={EmployeeId})";
         }
 
         public class Person
@@ -353,7 +350,7 @@ namespace T4DataEntry
             public string Name { get; set; }
             public int Age { get; set; }
             public string Hometown { get; set; }
-            public override string ToString() => Name;
+            public override string ToString() => $"Person(PersonId={PersonId})";
         }
 
 	#endregion
