@@ -220,8 +220,9 @@ namespace T4DataEntry
         private void Car_Click(object sender, RoutedEventArgs e)
         {
             Guid g;
+            Car selected = (Car)dgCar.SelectedItem;
             // read each Car column from its individual controls
-            string _CarId = tbCar_CarId.Text;
+            string _CarId = selected?.CarId ?? tbCar_CarId.Text;
             string _Make = tbCar_Make.Text;
             string _Model = tbCar_Model.Text;
             int _Year = int.Parse(tbCar_Year.Text);
@@ -244,8 +245,9 @@ namespace T4DataEntry
 
         private void Company_Click(object sender, RoutedEventArgs e)
         {
+            Company selected = (Company)dgCompany.SelectedItem;
             // read each Company column from its individual controls
-            Guid _CompanyId = Guid.NewGuid();
+            Guid _CompanyId = selected?.CompanyId ?? Guid.NewGuid();
             string _Name = tbCompany_Name.Text;
             string _StockSymbol = tbCompany_StockSymbol.Text;
             DateTime _Founded = dtCompany_Founded.SelectedDate ?? DateTime.MinValue;
@@ -264,8 +266,9 @@ namespace T4DataEntry
 
         private void Employee_Click(object sender, RoutedEventArgs e)
         {
+            Employee selected = (Employee)dgEmployee.SelectedItem;
             // read each Employee column from its individual controls
-            Guid _EmployeeId = Guid.NewGuid();
+            Guid _EmployeeId = selected?.EmployeeId ?? Guid.NewGuid();
             var _PersonId = (tbEmployee_PersonId.SelectedItem as Person).PersonId;
             var _CompanyId = (tbEmployee_CompanyId.SelectedItem as Company).CompanyId;
             string _Title = tbEmployee_Title.Text;
@@ -286,8 +289,9 @@ namespace T4DataEntry
 
         private void Person_Click(object sender, RoutedEventArgs e)
         {
+            Person selected = (Person)dgPerson.SelectedItem;
             // read each Person column from its individual controls
-            Guid _PersonId = Guid.NewGuid();
+            Guid _PersonId = selected?.PersonId ?? Guid.NewGuid();
             string _Name = tbPerson_Name.Text;
             int _Age = int.Parse(tbPerson_Age.Text);
             string _Hometown = tbPerson_Hometown.Text;

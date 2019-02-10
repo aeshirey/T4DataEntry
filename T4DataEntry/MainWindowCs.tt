@@ -251,12 +251,14 @@ namespace T4DataEntry
 		if (columns.Any(c => c.Type == "Guid?" && !c.IsPrimaryKey))
 			WriteLine("Guid g;");
 
+		WriteLine($"{table.Key} selected = ({table.Key})dg{table.Key}.SelectedItem;");
 		WriteLine($"// read each {tableName} column from its individual controls");
 		foreach (var column in columns)
 		{
 			if (column.IsPrimaryKey)
 			{
-				Write($"{column.Type} _{column.Name} = ");	
+
+				Write($"{column.Type} _{column.Name} = selected?.{column.Name} ?? ");	
 				switch (column.Type)
 				{
 					case "string":
