@@ -32,20 +32,6 @@ public Dictionary<string, List<Column>> GetTables()
 			tables[tableName].Add(col);
 		}
 
-		// if nothing is displayable, then default to the primary key (if one exists)
-		if (!tables[tableName].Any(c => c.IsDisplayable))
-		{
-			foreach (var c in tables[tableName])
-			{
-				if (c.IsPrimaryKey)
-				{
-					c.IsDisplayable = true;
-					break;
-				}
-			}
-		}
-
-
 		if (tables[tableName].Count == 0)
 		{
 			tables.Remove(tableName);

@@ -381,6 +381,12 @@ namespace T4DataEntry
 		{
 			WriteLine("public override string ToString() => Name;");
 		}
+		else if (table.Value.Any(c => c.IsPrimaryKey))
+		{
+			var pk = table.Value.First(c => c.IsPrimaryKey);
+			var pkName = pk.Type == "string" ? pk.Name : pk.Name + ".ToString()";
+			WriteLine($"public override string ToString() => {pkName};");
+		}
 
 		PopIndent();
 

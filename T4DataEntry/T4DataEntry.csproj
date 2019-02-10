@@ -61,7 +61,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindowCs1.xaml.cs">
+    <Compile Include="MainWindowCs.xaml.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MainWindowCs.tt</DependentUpon>
@@ -112,7 +112,7 @@
     </Content>
     <Content Include="MainWindowCs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MainWindowCs1.xaml.cs</LastGenOutput>
+      <LastGenOutput>MainWindowCs.xaml.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

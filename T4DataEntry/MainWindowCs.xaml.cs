@@ -340,7 +340,7 @@ namespace T4DataEntry
             public Guid CompanyId { get; set; }
             public string Title { get; set; }
             public int OfficeNumber { get; set; }
-            public override string ToString() => $"Employee(EmployeeId={EmployeeId})";
+            public override string ToString() => EmployeeId.ToString();
         }
 
         public class Person
@@ -350,7 +350,7 @@ namespace T4DataEntry
             public string Name { get; set; }
             public int Age { get; set; }
             public string Hometown { get; set; }
-            public override string ToString() => $"Person(PersonId={PersonId})";
+            public override string ToString() => Name;
         }
 
 	#endregion
