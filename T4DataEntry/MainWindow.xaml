@@ -40,22 +40,22 @@
             </Grid.RowDefinitions>
 
             <Label Content="CarId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbCar_CarId" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbCar_CarId" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="Make" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbCar_Make" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbCar_Make" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="Model" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbCar_Model" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbCar_Model" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="Year" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="tbCar_Year" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbCar_Year" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="PersonId" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="tbCar_PersonId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbCar_PersonId" Margin="5,5,5,5" IsEditable="False" />
 
             <Label Content="CompanyId" Grid.Row="5" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="5" Grid.Column="1" x:Name="tbCar_CompanyId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbCar_CompanyId" Margin="5,5,5,5" IsEditable="False" />
 
             <Button Grid.Row="6" Grid.Column="1" x:Name="btnCar_Save" Margin="5,5,5,5" Content="Save" Click="Car_Click" />
         </Grid>
@@ -91,13 +91,13 @@
             </Grid.RowDefinitions>
 
             <Label Content="CompanyId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbCompany_CompanyId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbCompany_CompanyId" Margin="5,5,5,5" IsEditable="False" />
 
             <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbCompany_Name" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbCompany_Name" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="StockSymbol" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbCompany_StockSymbol" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbCompany_StockSymbol" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="Founded" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
             <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dtCompany_Founded" Margin="5,5,5,5" />
@@ -136,19 +136,19 @@
             </Grid.RowDefinitions>
 
             <Label Content="EmployeeId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbEmployee_EmployeeId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbEmployee_EmployeeId" Margin="5,5,5,5" IsEditable="False" />
 
             <Label Content="PersonId" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbEmployee_PersonId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbEmployee_PersonId" Margin="5,5,5,5" IsEditable="False" />
 
             <Label Content="CompanyId" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbEmployee_CompanyId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbEmployee_CompanyId" Margin="5,5,5,5" IsEditable="False" />
 
             <Label Content="Title" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="tbEmployee_Title" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee_Title" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="OfficeNumber" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="tbEmployee_OfficeNumber" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbEmployee_OfficeNumber" Margin="5,5,5,5" IsEditable="True" />
 
             <Button Grid.Row="5" Grid.Column="1" x:Name="btnEmployee_Save" Margin="5,5,5,5" Content="Save" Click="Employee_Click" />
         </Grid>
@@ -184,16 +184,16 @@
             </Grid.RowDefinitions>
 
             <Label Content="PersonId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="tbPerson_PersonId" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbPerson_PersonId" Margin="5,5,5,5" IsEditable="False" />
 
             <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="tbPerson_Name" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbPerson_Name" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="Age" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="tbPerson_Age" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbPerson_Age" Margin="5,5,5,5" IsEditable="True" />
 
             <Label Content="Hometown" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="tbPerson_Hometown" Margin="5,5,5,5" IsEditable="True" />
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbPerson_Hometown" Margin="5,5,5,5" IsEditable="True" />
 
             <Button Grid.Row="4" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
         </Grid>

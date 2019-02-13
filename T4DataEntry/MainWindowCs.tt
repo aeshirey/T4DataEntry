@@ -39,13 +39,42 @@ namespace T4DataEntry
 			UserDB = new UserDB();
 
 			// load all records
-			<# foreach(var table in tables)
+			<#
+			
+			PushIndent("            ");
+			foreach(var table in tables)
 			{
-				WriteLine($"    Load{table.Key}();");
-			}#>
+				WriteLine($"Load{table.Key}();");
+			}
+			PopIndent();
+			#>
+
+			// input element validation
+			<#
+			PushIndent("            ");
+			foreach (var table in tables)
+			{
+				WriteLine($"// {table.Key}:");
+				foreach (var column in table.Value)
+				{
+					var t = (column.IsNullable ? "Nullable" : string.Empty) + column.Type;
+					switch (column.Type)
+					{
+						case "int":
+							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {t}_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
+							break;
+						case "Guid":
+							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {t}_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
+							break;
+					}
+				}
+
+				WriteLine("");
+			}
+			PopIndent();
+			#>
         }
 		<#
-		PushIndent("    ");
 		PushIndent("    ");
 		#>
     
@@ -83,7 +112,7 @@ namespace T4DataEntry
 						if (otherColumn.Name == column.Name)
 						{
 							// update the referenced table
-							WriteLine($"tb{otherTable.Key}_{otherColumn.Name}.ItemsSource = records;");
+							WriteLine($"{otherColumn.UIElementName}.ItemsSource = records;");
 						}
 					}
 				}
@@ -101,7 +130,7 @@ namespace T4DataEntry
 					case "bool":
 						break;
 					default:
-						WriteLine($"tb{table.Key}_{column.Name}.ItemsSource = records.Select(r => r.{column.Name}).ToList();");
+						WriteLine($"{column.UIElementName}.ItemsSource = records.Select(r => r.{column.Name}).ToList();");
 						break;
 				}
 			}
@@ -136,6 +165,34 @@ namespace T4DataEntry
 		}        
 	}
 
+	#region Input validation events
+	private void Nullableint_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+    {
+		int i;
+		var isValid = string.IsNullOrEmpty(sender.Text) || int.TryParse(sender.Text, out i);
+		btn.IsEnabled = isValid;
+    }
+	private void int_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+    {
+		int i;
+		var isValid = int.TryParse(sender.Text, out i);
+		btn.IsEnabled = isValid;
+    }
+	private void NullableGuid_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+    {
+		Guid g;
+		var isValid = string.IsNullOrEmpty(sender.Text) || Guid.TryParse(sender.Text, out g);
+		btn.IsEnabled = isValid;
+    }
+	private void Guid_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+    {
+		Guid g;
+		var isValid = Guid.TryParse(sender.Text, out g);
+		btn.IsEnabled = isValid;
+    }
+	#endregion
+
+
 	#region DataGrid selection changed
 	<#
 	PushIndent("    ");
@@ -154,19 +211,19 @@ namespace T4DataEntry
 			switch(column.Type)
 			{
 				case "string":
-					WriteLine($"tb{table.Key}_{column.Name}.Text = default({column.Type});");
+					WriteLine($"{column.UIElementName}.Text = default({column.Type});");
 					break;
 				case "int":
 				case "int?":
 				case "Guid":
 				case "Guid?":
-					WriteLine($"tb{table.Key}_{column.Name}.Text = string.Empty;");
+					WriteLine($"{column.UIElementName}.Text = string.Empty;");
 					break;
 				case "DateTime":
-					WriteLine($"dt{table.Key}_{column.Name}.SelectedDate = DateTime.Today;");
+					WriteLine($"{column.UIElementName}.SelectedDate = DateTime.Today;");
 					break;
 				case "bool":
-					WriteLine($"cb{table.Key}_{column.Name}.IsChecked = false;");
+					WriteLine($"{column.UIElementName}.IsChecked = false;");
 					break;
 				default:
 					throw new Exception("Unhandled type: " + column.Type);
@@ -184,16 +241,16 @@ namespace T4DataEntry
 		{
 			if (column.IsPrimaryKey)
 			{
-				Write($"tb{table.Key}_{column.Name}.Text = {instance}.{column.Name}");
+				Write($"{column.UIElementName}.Text = {instance}.{column.Name}");
 				WriteLine(column.Type == "string" ? ";" : ".ToString();");
 			}
 			else if (column.IsId)
 			{
-				WriteLine($"foreach (var item in tb{table.Key}_{column.Name}.Items)");
+				WriteLine($"foreach (var item in {column.UIElementName}.Items)");
 				WriteLine("{");
 				WriteLine($"   if ((item as {column.Name.Replace("Id", "")}).{column.Name} == {instance}.{column.Name})");
-				WriteLine($"      tb{table.Key}_{column.Name}.SelectedItem = item;");
-				//WriteLine($"   if (item == tb{table.Key}_{column.Name}.SelectedItem) continue;");
+				WriteLine($"      {column.UIElementName}.SelectedItem = item;");
+				//WriteLine($"   if (item == {column.UIElementName}.SelectedItem) continue;");
 				WriteLine("}");
 			}
 			else
@@ -201,21 +258,21 @@ namespace T4DataEntry
 				switch(column.Type)
 				{
 					case "string":
-						WriteLine($"tb{table.Key}_{column.Name}.Text = {table.Key.ToLower()}.{column.Name};");
+						WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name};");
 						break;
 					case "int":
 					case "int?":
-						WriteLine($"tb{table.Key}_{column.Name}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+						WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
 						break;
 					case "Guid":
 					case "Guid?":
-						WriteLine($"tb{table.Key}_{column.Name}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+						WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
 						break;
 					case "DateTime":
-						WriteLine($"dt{table.Key}_{column.Name}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
+						WriteLine($"{column.UIElementName}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
 						break;
 					case "bool":
-						WriteLine($"cb{table.Key}_{column.Name}.IsChecked = {table.Key.ToLower()}.{column.Name};");
+						WriteLine($"{column.UIElementName}.IsChecked = {table.Key.ToLower()}.{column.Name};");
 						break;
 					default:
 						throw new Exception("Unhandled type: " + column.Type);
@@ -228,14 +285,12 @@ namespace T4DataEntry
 		PopIndent();
 		WriteLine("}");
 	}
-	PopIndent();
 	#>
 	#endregion
 
 
 
-
-	#region Save button clicked (update/insert records)
+#region Save button clicked (update/insert records)
 <#
 	foreach (var table in tables)
 	{
@@ -262,7 +317,7 @@ namespace T4DataEntry
 				switch (column.Type)
 				{
 					case "string":
-						WriteLine($"tb{table.Key}_{column.Name}.Text;");
+						WriteLine($"{column.UIElementName}.Text;");
 						break;
 					case "int?":
 						WriteLine($"default({column.Type});");		
@@ -273,7 +328,7 @@ namespace T4DataEntry
 						WriteLine("Guid.NewGuid();");
 						break;
 					case "int":
-						WriteLine("int.Parse(tb{table.Key}_{column.Name}.Text);");
+						WriteLine("int.Parse({column.UIElementName}.Text);");
 						break;
 					default:
 						break;
@@ -286,38 +341,38 @@ namespace T4DataEntry
 				// in this case, use the null-coalescing operator ("?.") to qualify the dereference.
 				// eg, "var _PersonId = (dbCar_PersonId.SelectedItem as Person)?.PersonId;"
 				var coalesce = column.Type == "Guid?" ? "?" : "";
-				WriteLine($"var _{column.Name} = (tb{table.Key}_{column.Name}.SelectedItem as {column.Name.Replace("Id", string.Empty)}){coalesce}.{column.Name};");
+				WriteLine($"var _{column.Name} = ({column.UIElementName}.SelectedItem as {column.Name.Replace("Id", string.Empty)}){coalesce}.{column.Name};");
 			}
 			else
 			{
 				switch (column.Type)
 				{
 					case "bool?":
-						WriteLine($"bool? _{column.Name} = cb{tableName}_{column.Name}.IsChecked;");
+						WriteLine($"bool? _{column.Name} = {column.UIElementName}.IsChecked;");
 						break;
 					case "bool":
-						WriteLine($"bool _{column.Name} = cb{tableName}_{column.Name}.IsChecked ?? false;");
+						WriteLine($"bool _{column.Name} = {column.UIElementName}.IsChecked ?? false;");
 						break;
 					case "DateTime?":
-						WriteLine($"DateTime? _{column.Name} = dt{tableName}_{column.Name}.SelectedDate;");
+						WriteLine($"DateTime? _{column.Name} = {column.UIElementName}.SelectedDate;");
 						break;
 					case "DateTime":
-						WriteLine($"DateTime _{column.Name} = dt{tableName}_{column.Name}.SelectedDate ?? DateTime.MinValue;");
+						WriteLine($"DateTime _{column.Name} = {column.UIElementName}.SelectedDate ?? DateTime.MinValue;");
 						break;
 					case "int?":
-						WriteLine($"int? _{column.Name} = int.TryParse(tb{tableName}_{column.Name}.Text, out i) ? i : (int?)null;");
+						WriteLine($"int? _{column.Name} = int.TryParse({column.UIElementName}.Text, out i) ? i : (int?)null;");
 						break;
 					case "int":
-						WriteLine($"int _{column.Name} = int.Parse(tb{tableName}_{column.Name}.Text);");
+						WriteLine($"int _{column.Name} = int.Parse({column.UIElementName}.Text);");
 						break;
 					case "Guid?":
-						WriteLine($"Guid? _{column.Name} = Guid.TryParse(tb{tableName}_{column.Name}.Text, out g) ? g : (Guid?)null;");
+						WriteLine($"Guid? _{column.Name} = Guid.TryParse({column.UIElementName}.Text, out g) ? g : (Guid?)null;");
 						break;
 					case "Guid":
-						WriteLine($"Guid _{column.Name} = Guid.Parse(tb{tableName}_{column.Name}.Text);");
+						WriteLine($"Guid _{column.Name} = Guid.Parse({column.UIElementName}.Text);");
 						break;
 					case "string":
-						WriteLine($"string _{column.Name} = tb{tableName}_{column.Name}.Text;");
+						WriteLine($"string _{column.Name} = {column.UIElementName}.Text;");
 						break;
 				}
 			}
@@ -348,80 +403,74 @@ namespace T4DataEntry
 	PopIndent();
 	#>
 	#endregion
-#endregion
+	#endregion
+}
 
-	}
-
-	#region Generated classes for the object model
-	<#
+#region Generated classes for the object model
+<#
+foreach (var table in tables)
+{
+	WriteLine($"public class {table.Key}");
+	WriteLine("{");
+		
 	PushIndent("    ");
-	foreach (var table in tables)
+	foreach (var column in table.Value)
 	{
-		WriteLine($"public class {table.Key}");
-		WriteLine("{");
-		
-		PushIndent("    ");
-		foreach (var column in table.Value)
+		if (column.IsPrimaryKey)
 		{
-			if (column.IsPrimaryKey)
-			{
-				WriteLine("[PrimaryKey]");
-			}
-
-			WriteLine($"public {column.Type} {column.Name} {{ get; set; }}");
+			WriteLine("[PrimaryKey]");
 		}
 
-		// friendly name to display?
-		if (table.Value.Any(c => c.IsDisplayable))
-		{
-			var x = string.Join(", ", table.Value
-				.Where(c => c.IsDisplayable)
-				.Select(c => $"{c.Name}={{{c.Name}}}"));
-			WriteLine($"public override string ToString() => $\"{table.Key}({x})\";");
-		}
-		else if (table.Value.Any(c => c.Name == "Name"))
-		{
-			WriteLine("public override string ToString() => Name;");
-		}
-		else if (table.Value.Any(c => c.IsPrimaryKey))
-		{
-			var pk = table.Value.First(c => c.IsPrimaryKey);
-			var pkName = pk.Type == "string" ? pk.Name : pk.Name + ".ToString()";
-			WriteLine($"public override string ToString() => {pkName};");
-		}
-
-		PopIndent();
-
-		
-		WriteLine("}");
-		WriteLine("");
+		WriteLine($"public {column.Type} {column.Name} {{ get; set; }}");
 	}
+
+	// friendly name to display?
+	if (table.Value.Any(c => c.IsDisplayable))
+	{
+		var x = string.Join(", ", table.Value
+			.Where(c => c.IsDisplayable)
+			.Select(c => $"{c.Name}={{{c.Name}}}"));
+		WriteLine($"public override string ToString() => $\"{table.Key}({x})\";");
+	}
+	else if (table.Value.Any(c => c.Name == "Name"))
+	{
+		WriteLine("public override string ToString() => Name;");
+	}
+	else if (table.Value.Any(c => c.IsPrimaryKey))
+	{
+		var pk = table.Value.First(c => c.IsPrimaryKey);
+		var pkName = pk.Type == "string" ? pk.Name : pk.Name + ".ToString()";
+		WriteLine($"public override string ToString() => {pkName};");
+	}
+
 	PopIndent();
-	PopIndent();
-	#>
+
+		
+	WriteLine("}");
+	WriteLine("");
+}
+PopIndent();
+PopIndent();
+#>
 	#endregion
 
 	
 
 	public class UserDB : SQLiteConnection
-    {
-        public const string DatabaseFile = @"data.sqlite";
-        public static SQLiteConnection DbConnection;
-        public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
-        {
+	{
+		public const string DatabaseFile = @"data.sqlite";
+		public static SQLiteConnection DbConnection;
+		public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
+		{
 <#
-		PushIndent("    ");
-		PushIndent("    ");
-		PushIndent("    ");
+		PushIndent("            ");
 		foreach (var table in tables)
 		{
 			WriteLine($"CreateTable<{table.Key}>();");
 		}
 		PopIndent();
-		PopIndent();
-		PopIndent();
 		#>
-            Commit();
-        }
+				Commit();
+		}
 	}
 }

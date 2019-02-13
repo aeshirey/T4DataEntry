@@ -21,15 +21,16 @@ public Dictionary<string, List<Column>> GetTables()
 
 		foreach (var c in columns)
 		{
-			var col = new Column
-			{
-				Name = c[0].Replace("*", string.Empty),
-				Type = c[1],
-				IsPrimaryKey = c[0] == tableName + "Id",
-				IsDisplayable = c[0].StartsWith("*")
-			};
-
-			tables[tableName].Add(col);
+			//var col = new Column
+			//{
+			//	Name = c[0].Replace("*", string.Empty),
+			//	Type = c[1],
+			//	IsPrimaryKey = c[0] == tableName + "Id",
+			//	IsDisplayable = c[0].StartsWith("*")
+			//};
+			//
+			//tables[tableName].Add(col);
+			tables[tableName].Add(new Column(tableName, c[0], c[1]));
 		}
 
 		if (tables[tableName].Count == 0)
@@ -46,10 +47,47 @@ public class Column
 {
 	public string Name;
 	public string Type;
-	public bool IsPrimaryKey;
+	private string Table;
 
+	public bool IsPrimaryKey;
+	public bool IsNullable;
 	public bool IsDisplayable;
+
+	public readonly string UIElementName;
 	
 	public bool IsId {get => Name.EndsWith("Id"); }
+
+	public Column(string table, string name, string type)
+	{
+		this.Name = name.Replace("*", string.Empty);
+
+		this.Type = type;
+		if (this.Type == "string?")
+			this.Type = "string";
+
+		this.IsPrimaryKey  = name == table + "Id";
+		this.IsDisplayable = name.StartsWith("*");
+
+		switch (this.Type)
+		{
+			case "int":
+			case "int?":
+			case "Guid":
+			case "Guid?":
+			case "string":
+				this.UIElementName = $"cb{table}_{this.Name}";
+				break;
+			case "DateTime":
+			case "DateTime?":
+				this.UIElementName = $"dt{table}_{this.Name}";
+				break;
+			case "bool":
+			case "bool?":
+				this.UIElementName = $"cb{table}_{this.Name}";
+				break;
+			default:
+				throw new Exception("Unhandled type for UIElementName: " + this.Type);
+		}
+	}
 }
 #>

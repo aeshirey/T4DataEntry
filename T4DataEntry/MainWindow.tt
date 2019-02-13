@@ -84,21 +84,21 @@
 
 				if (column.IsPrimaryKey)
 				{
-					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"tb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{column.Type == "string"}\" />");
+					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{column.Type == "string"}\" />");
 				}
 				else
 				{
 					if (column.Type == "DateTime")
 					{
-						WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"dt{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+						WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
 					}
 					else if (column.Type == "bool")
 					{
-						WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"cb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+						WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
 					}
 					else
 					{
-						WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"tb{table.Key}_{column.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+						WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
 					}
 				}
 				WriteLine("");

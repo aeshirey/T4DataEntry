@@ -2,4 +2,4 @@ EmployeeId:Guid
 PersonId:Guid
 CompanyId:Guid
 Title:string
-OfficeNumber:int
+OfficeNumber:int?

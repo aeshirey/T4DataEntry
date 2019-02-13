@@ -1,4 +1,4 @@
 CompanyId:Guid
 *Name:string
-*StockSymbol:string
+*StockSymbol:string?
 Founded:DateTime
