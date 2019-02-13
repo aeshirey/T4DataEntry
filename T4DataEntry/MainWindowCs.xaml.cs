@@ -42,6 +42,7 @@ namespace T4DataEntry
 
             // Company:
             cbCompany_CompanyId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnCompany_Save);
+            cbCompany_Name.KeyUp += (sender, e) => stringNotEmpty_KeyUp((ComboBox)sender, e, btnCompany_Save);
 
             // Employee:
             cbEmployee_EmployeeId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnEmployee_Save);
@@ -67,6 +68,7 @@ namespace T4DataEntry
             cbCar_Make.ItemsSource = records.Select(r => r.Make).ToList();
             cbCar_Model.ItemsSource = records.Select(r => r.Model).ToList();
             cbCar_Year.ItemsSource = records.Select(r => r.Year).ToList();
+            btnCar_Save.IsEnabled = false;
         }
         private void LoadCompany()
         {
@@ -80,6 +82,7 @@ namespace T4DataEntry
             cbEmployee_CompanyId.ItemsSource = records;
             cbCompany_Name.ItemsSource = records.Select(r => r.Name).ToList();
             cbCompany_StockSymbol.ItemsSource = records.Select(r => r.StockSymbol).ToList();
+            btnCompany_Save.IsEnabled = false;
         }
         private void LoadEmployee()
         {
@@ -91,6 +94,7 @@ namespace T4DataEntry
             records.ForEach(r => dgEmployee.Items.Add(r));
             cbEmployee_Title.ItemsSource = records.Select(r => r.Title).ToList();
             cbEmployee_OfficeNumber.ItemsSource = records.Select(r => r.OfficeNumber).ToList();
+            btnEmployee_Save.IsEnabled = false;
         }
         private void LoadPerson()
         {
@@ -105,6 +109,7 @@ namespace T4DataEntry
             cbPerson_Name.ItemsSource = records.Select(r => r.Name).ToList();
             cbPerson_Age.ItemsSource = records.Select(r => r.Age).ToList();
             cbPerson_Hometown.ItemsSource = records.Select(r => r.Hometown).ToList();
+            btnPerson_Save.IsEnabled = false;
         }
     	#endregion
     
@@ -152,6 +157,11 @@ namespace T4DataEntry
         {
     		Guid g;
     		var isValid = Guid.TryParse(sender.Text, out g);
+    		btn.IsEnabled = isValid;
+        }
+    	private void stringNotEmpty_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+        {
+    		var isValid = !string.IsNullOrEmpty(sender.Text);
     		btn.IsEnabled = isValid;
         }
     	#endregion
@@ -415,7 +425,7 @@ namespace T4DataEntry
             CreateTable<Company>();
             CreateTable<Employee>();
             CreateTable<Person>();
-				Commit();
+			Commit();
 		}
 	}
 }

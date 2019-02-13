@@ -49,9 +49,12 @@ public class Column
 	public string Type;
 	private string Table;
 
-	public bool IsPrimaryKey;
-	public bool IsNullable;
-	public bool IsDisplayable;
+	public readonly bool IsPrimaryKey;
+	public readonly bool IsNullable;
+	public readonly bool IsDisplayable;
+
+	// for strings, indicates whether the text can be the empty string. specified as "string!"
+	public readonly bool CanBeEmptyString;
 
 	public readonly string UIElementName;
 	
@@ -61,9 +64,23 @@ public class Column
 	{
 		this.Name = name.Replace("*", string.Empty);
 
-		this.Type = type;
-		if (this.Type == "string?")
-			this.Type = "string";
+		this.IsNullable = type.EndsWith("?");
+
+		switch (type)
+		{
+			case "string?":
+				this.Type = "string";
+				this.CanBeEmptyString = true; // nullable strings can be the empty string
+				break;
+			case "string!":
+				this.Type = "string";
+				this.CanBeEmptyString = false; // the "string!" type is declared as never being empty
+				break;
+			default:
+				this.Type = type;
+				this.CanBeEmptyString = true; // currently not relevant
+				break;
+		}
 
 		this.IsPrimaryKey  = name == table + "Id";
 		this.IsDisplayable = name.StartsWith("*");
@@ -86,7 +103,7 @@ public class Column
 				this.UIElementName = $"cb{table}_{this.Name}";
 				break;
 			default:
-				throw new Exception("Unhandled type for UIElementName: " + this.Type);
+				throw new Exception($"Unhandled type for {table} UIElementName: '{this.Type}'");
 		}
 	}
 }

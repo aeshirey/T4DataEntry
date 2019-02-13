@@ -66,6 +66,12 @@ namespace T4DataEntry
 						case "Guid":
 							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {t}_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
 							break;
+						case "string":
+							if (!column.CanBeEmptyString)
+							{
+								WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => stringNotEmpty_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
+							}
+							break;
 					}
 				}
 
@@ -136,6 +142,7 @@ namespace T4DataEntry
 			}
 		}
 
+		WriteLine($"btn{table.Key}_Save.IsEnabled = false;");
 		
 		PopIndent();
 		WriteLine("}");
@@ -188,6 +195,11 @@ namespace T4DataEntry
     {
 		Guid g;
 		var isValid = Guid.TryParse(sender.Text, out g);
+		btn.IsEnabled = isValid;
+    }
+	private void stringNotEmpty_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+    {
+		var isValid = !string.IsNullOrEmpty(sender.Text);
 		btn.IsEnabled = isValid;
     }
 	#endregion
@@ -470,7 +482,7 @@ PopIndent();
 		}
 		PopIndent();
 		#>
-				Commit();
+			Commit();
 		}
 	}
 }
