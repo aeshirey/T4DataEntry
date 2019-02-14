@@ -55,8 +55,9 @@ public class Column
 
 	// for strings, indicates whether the text can be the empty string. specified as "string!"
 	public readonly bool CanBeEmptyString;
-
+	
 	public readonly string UIElementName;
+	public readonly string UIElementType;
 	
 	public bool IsId {get => Name.EndsWith("Id"); }
 
@@ -93,14 +94,17 @@ public class Column
 			case "Guid?":
 			case "string":
 				this.UIElementName = $"cb{table}_{this.Name}";
+				this.UIElementType = "ComboBox";
 				break;
 			case "DateTime":
 			case "DateTime?":
 				this.UIElementName = $"dt{table}_{this.Name}";
+				this.UIElementType = "DatePicker";
 				break;
 			case "bool":
 			case "bool?":
 				this.UIElementName = $"cb{table}_{this.Name}";
+				this.UIElementType = "CheckBox";
 				break;
 			default:
 				throw new Exception($"Unhandled type for {table} UIElementName: '{this.Type}'");

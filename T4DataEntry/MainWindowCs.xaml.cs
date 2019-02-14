@@ -38,20 +38,20 @@ namespace T4DataEntry
 
 			// input element validation
 			// Car:
-            cbCar_Year.KeyUp += (sender, e) => int_KeyUp((ComboBox)sender, e, btnCar_Save);
+            cbCar_Year.KeyUp += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
 
             // Company:
-            cbCompany_CompanyId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnCompany_Save);
-            cbCompany_Name.KeyUp += (sender, e) => stringNotEmpty_KeyUp((ComboBox)sender, e, btnCompany_Save);
+            cbCompany_CompanyId.KeyUp += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
+            cbCompany_Name.KeyUp += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
 
             // Employee:
-            cbEmployee_EmployeeId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnEmployee_Save);
-            cbEmployee_PersonId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnEmployee_Save);
-            cbEmployee_CompanyId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnEmployee_Save);
+            cbEmployee_EmployeeId.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_PersonId.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_CompanyId.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
 
             // Person:
-            cbPerson_PersonId.KeyUp += (sender, e) => Guid_KeyUp((ComboBox)sender, e, btnPerson_Save);
-            cbPerson_Age.KeyUp += (sender, e) => int_KeyUp((ComboBox)sender, e, btnPerson_Save);
+            cbPerson_PersonId.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
+            cbPerson_Age.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
 
         }
 		    
@@ -111,64 +111,68 @@ namespace T4DataEntry
             cbPerson_Hometown.ItemsSource = records.Select(r => r.Hometown).ToList();
             btnPerson_Save.IsEnabled = false;
         }
-    	#endregion
-    
-    
-    
-    	
-    	#region Events
-    	// https://stackoverflow.com/questions/10667002/
-    	private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    	{
-    		if (sender != null)
-    		{
-    			DataGrid grid = sender as DataGrid;
-    			if (grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
-    			{
-    				DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-    				if (!dgr.IsMouseOver)
-    				{
-    					(dgr as DataGridRow).IsSelected = false;
-    				}
-    			}
-    		}        
-    	}
-    
-    	#region Input validation events
-    	private void Nullableint_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+        #endregion
+        
+        
+        
+        	
+        #region Events
+        // https://stackoverflow.com/questions/10667002/
+        private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-    		int i;
-    		var isValid = string.IsNullOrEmpty(sender.Text) || int.TryParse(sender.Text, out i);
-    		btn.IsEnabled = isValid;
+        	if (sender != null)
+        	{
+        		DataGrid grid = sender as DataGrid;
+        		if (grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+        		{
+        			DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+        			if (!dgr.IsMouseOver)
+        			{
+        				(dgr as DataGridRow).IsSelected = false;
+        			}
+        		}
+        	}        
         }
-    	private void int_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+        
+        #region Input validation events
+        private bool IsCarValid()
         {
-    		int i;
-    		var isValid = int.TryParse(sender.Text, out i);
-    		btn.IsEnabled = isValid;
+            int i;
+            if (!int.TryParse(cbCar_Year.Text, out i)) return false;
+            return true;
         }
-    	private void NullableGuid_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+
+        private bool IsCompanyValid()
         {
-    		Guid g;
-    		var isValid = string.IsNullOrEmpty(sender.Text) || Guid.TryParse(sender.Text, out g);
-    		btn.IsEnabled = isValid;
+            Guid g;
+            if (!Guid.TryParse(cbCompany_CompanyId.Text, out g)) return false;
+            if (string.IsNullOrEmpty(cbCompany_Name.Text)) return false;
+            return true;
         }
-    	private void Guid_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+
+        private bool IsEmployeeValid()
         {
-    		Guid g;
-    		var isValid = Guid.TryParse(sender.Text, out g);
-    		btn.IsEnabled = isValid;
+            Guid g;
+            if (!Guid.TryParse(cbEmployee_EmployeeId.Text, out g)) return false;
+            if (!Guid.TryParse(cbEmployee_PersonId.Text, out g)) return false;
+            if (!Guid.TryParse(cbEmployee_CompanyId.Text, out g)) return false;
+            return true;
         }
-    	private void stringNotEmpty_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
+
+        private bool IsPersonValid()
         {
-    		var isValid = !string.IsNullOrEmpty(sender.Text);
-    		btn.IsEnabled = isValid;
+            int i;
+            Guid g;
+            if (!Guid.TryParse(cbPerson_PersonId.Text, out g)) return false;
+            if (!int.TryParse(cbPerson_Age.Text, out i)) return false;
+            return true;
         }
-    	#endregion
-    
-    
-    	#region DataGrid selection changed
-    	private void Car_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        #endregion
+        
+        
+        #region DataGrid selection changed
+        private void Car_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // get the Car object
             if (e.AddedItems.Count == 0)
@@ -266,7 +270,7 @@ namespace T4DataEntry
                 cbPerson_Hometown.Text = person.Hometown;
             }
         }
-        	#endregion
+        #endregion
         
         
         

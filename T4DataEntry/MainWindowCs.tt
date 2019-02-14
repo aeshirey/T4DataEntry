@@ -57,19 +57,19 @@ namespace T4DataEntry
 				WriteLine($"// {table.Key}:");
 				foreach (var column in table.Value)
 				{
-					var t = (column.IsNullable ? "Nullable" : string.Empty) + column.Type;
+					var btn = $"btn{table.Key}_Save";
 					switch (column.Type)
 					{
 						case "int":
-							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {t}_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
+							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
 							break;
 						case "Guid":
-							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {t}_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
+							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
 							break;
 						case "string":
 							if (!column.CanBeEmptyString)
 							{
-								WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => stringNotEmpty_KeyUp((ComboBox)sender, e, btn{table.Key}_Save);");
+								WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
 							}
 							break;
 					}
@@ -147,158 +147,179 @@ namespace T4DataEntry
 		PopIndent();
 		WriteLine("}");
 	}
-	PopIndent();
 	#>
-	#endregion
+#endregion
 
 
 
 	
-	#region Events
-	// https://stackoverflow.com/questions/10667002/
-	private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+#region Events
+// https://stackoverflow.com/questions/10667002/
+private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+{
+	if (sender != null)
 	{
-		if (sender != null)
+		DataGrid grid = sender as DataGrid;
+		if (grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
 		{
-			DataGrid grid = sender as DataGrid;
-			if (grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+			DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+			if (!dgr.IsMouseOver)
 			{
-				DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-				if (!dgr.IsMouseOver)
-				{
-					(dgr as DataGridRow).IsSelected = false;
-				}
+				(dgr as DataGridRow).IsSelected = false;
 			}
-		}        
-	}
+		}
+	}        
+}
 
-	#region Input validation events
-	private void Nullableint_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
-    {
-		int i;
-		var isValid = string.IsNullOrEmpty(sender.Text) || int.TryParse(sender.Text, out i);
-		btn.IsEnabled = isValid;
-    }
-	private void int_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
-    {
-		int i;
-		var isValid = int.TryParse(sender.Text, out i);
-		btn.IsEnabled = isValid;
-    }
-	private void NullableGuid_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
-    {
-		Guid g;
-		var isValid = string.IsNullOrEmpty(sender.Text) || Guid.TryParse(sender.Text, out g);
-		btn.IsEnabled = isValid;
-    }
-	private void Guid_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
-    {
-		Guid g;
-		var isValid = Guid.TryParse(sender.Text, out g);
-		btn.IsEnabled = isValid;
-    }
-	private void stringNotEmpty_KeyUp(ComboBox sender, KeyEventArgs e, Button btn)
-    {
-		var isValid = !string.IsNullOrEmpty(sender.Text);
-		btn.IsEnabled = isValid;
-    }
-	#endregion
-
-
-	#region DataGrid selection changed
-	<#
-	PushIndent("    ");
+#region Input validation events
+<#
 	foreach (var table in tables)
 	{
-		WriteLine($"private void {table.Key}_SelectionChanged(object sender, SelectionChangedEventArgs e)");
+		WriteLine($"private bool Is{table.Key}Valid()");
 		WriteLine("{");
 		PushIndent("    ");
 
-		WriteLine($"// get the {table.Key} object");
-		WriteLine($"if (e.AddedItems.Count == 0)");
-		WriteLine("{");
-		PushIndent("    ");
-		foreach(var column in table.Value)
+		if (table.Value.Any(c => c.Type == "int")) WriteLine("int i;");
+		if (table.Value.Any(c => c.Type == "Guid")) WriteLine("Guid g;");
+
+		foreach (var column in table.Value)
+		{
+			var t = (column.IsNullable ? "Nullable" : string.Empty) + column.Type;
+			switch (column.Type)
+			{
+				case "int":
+					if (column.IsNullable)
+					{
+						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !int.TryParse({column.UIElementName}.Text, out i)) return false;");
+					}
+					else
+					{
+						WriteLine($"if (!int.TryParse({column.UIElementName}.Text, out i)) return false;");
+					}
+					break;
+				case "Guid":
+					if (column.IsNullable)
+					{
+						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !Guid.TryParse({column.UIElementName}.Text, out g)) return false;");
+					}
+					else
+					{
+						WriteLine($"if (!Guid.TryParse({column.UIElementName}.Text, out g)) return false;");
+					}
+					break;
+				case "string":
+					if (!column.CanBeEmptyString)
+					{
+						WriteLine($"if (string.IsNullOrEmpty({column.UIElementName}.Text)) return false;");
+					}
+					break;
+			}
+		}
+
+		WriteLine("return true;");
+
+
+		PopIndent();
+		WriteLine("}");
+		WriteLine("");
+	}
+	#>
+#endregion
+
+
+#region DataGrid selection changed
+<#
+foreach (var table in tables)
+{
+	WriteLine($"private void {table.Key}_SelectionChanged(object sender, SelectionChangedEventArgs e)");
+	WriteLine("{");
+	PushIndent("    ");
+
+	WriteLine($"// get the {table.Key} object");
+	WriteLine($"if (e.AddedItems.Count == 0)");
+	WriteLine("{");
+	PushIndent("    ");
+	foreach(var column in table.Value)
+	{
+		switch(column.Type)
+		{
+			case "string":
+				WriteLine($"{column.UIElementName}.Text = default({column.Type});");
+				break;
+			case "int":
+			case "int?":
+			case "Guid":
+			case "Guid?":
+				WriteLine($"{column.UIElementName}.Text = string.Empty;");
+				break;
+			case "DateTime":
+				WriteLine($"{column.UIElementName}.SelectedDate = DateTime.Today;");
+				break;
+			case "bool":
+				WriteLine($"{column.UIElementName}.IsChecked = false;");
+				break;
+			default:
+				throw new Exception("Unhandled type: " + column.Type);
+		}
+	}
+	PopIndent();
+	WriteLine("}");
+	WriteLine("else");
+	WriteLine("{");
+
+	PushIndent("    ");
+	string instance = table.Key.ToLower();
+	WriteLine($"{table.Key} {instance} = e.AddedItems[0] as {table.Key};");
+	foreach(var column in table.Value)
+	{
+		if (column.IsPrimaryKey)
+		{
+			Write($"{column.UIElementName}.Text = {instance}.{column.Name}");
+			WriteLine(column.Type == "string" ? ";" : ".ToString();");
+		}
+		else if (column.IsId)
+		{
+			WriteLine($"foreach (var item in {column.UIElementName}.Items)");
+			WriteLine("{");
+			WriteLine($"   if ((item as {column.Name.Replace("Id", "")}).{column.Name} == {instance}.{column.Name})");
+			WriteLine($"      {column.UIElementName}.SelectedItem = item;");
+			//WriteLine($"   if (item == {column.UIElementName}.SelectedItem) continue;");
+			WriteLine("}");
+		}
+		else
 		{
 			switch(column.Type)
 			{
 				case "string":
-					WriteLine($"{column.UIElementName}.Text = default({column.Type});");
+					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name};");
 					break;
 				case "int":
 				case "int?":
+					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+					break;
 				case "Guid":
 				case "Guid?":
-					WriteLine($"{column.UIElementName}.Text = string.Empty;");
+					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
 					break;
 				case "DateTime":
-					WriteLine($"{column.UIElementName}.SelectedDate = DateTime.Today;");
+					WriteLine($"{column.UIElementName}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
 					break;
 				case "bool":
-					WriteLine($"{column.UIElementName}.IsChecked = false;");
+					WriteLine($"{column.UIElementName}.IsChecked = {table.Key.ToLower()}.{column.Name};");
 					break;
 				default:
 					throw new Exception("Unhandled type: " + column.Type);
 			}
 		}
-		PopIndent();
-		WriteLine("}");
-		WriteLine("else");
-		WriteLine("{");
-
-		PushIndent("    ");
-		string instance = table.Key.ToLower();
-		WriteLine($"{table.Key} {instance} = e.AddedItems[0] as {table.Key};");
-		foreach(var column in table.Value)
-		{
-			if (column.IsPrimaryKey)
-			{
-				Write($"{column.UIElementName}.Text = {instance}.{column.Name}");
-				WriteLine(column.Type == "string" ? ";" : ".ToString();");
-			}
-			else if (column.IsId)
-			{
-				WriteLine($"foreach (var item in {column.UIElementName}.Items)");
-				WriteLine("{");
-				WriteLine($"   if ((item as {column.Name.Replace("Id", "")}).{column.Name} == {instance}.{column.Name})");
-				WriteLine($"      {column.UIElementName}.SelectedItem = item;");
-				//WriteLine($"   if (item == {column.UIElementName}.SelectedItem) continue;");
-				WriteLine("}");
-			}
-			else
-			{
-				switch(column.Type)
-				{
-					case "string":
-						WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name};");
-						break;
-					case "int":
-					case "int?":
-						WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
-						break;
-					case "Guid":
-					case "Guid?":
-						WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
-						break;
-					case "DateTime":
-						WriteLine($"{column.UIElementName}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
-						break;
-					case "bool":
-						WriteLine($"{column.UIElementName}.IsChecked = {table.Key.ToLower()}.{column.Name};");
-						break;
-					default:
-						throw new Exception("Unhandled type: " + column.Type);
-				}
-			}
-		}
-		PopIndent();
-		WriteLine("}");
-
-		PopIndent();
-		WriteLine("}");
 	}
+	PopIndent();
+	WriteLine("}");
+
+	PopIndent();
+	WriteLine("}");
+}
 	#>
-	#endregion
+#endregion
 
 
 
@@ -456,8 +477,6 @@ foreach (var table in tables)
 	}
 
 	PopIndent();
-
-		
 	WriteLine("}");
 	WriteLine("");
 }
