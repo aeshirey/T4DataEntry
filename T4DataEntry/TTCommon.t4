@@ -90,6 +90,8 @@ public class Column
 		{
 			case "int":
 			case "int?":
+			case "double":
+			case "double?":
 			case "Guid":
 			case "Guid?":
 			case "string":

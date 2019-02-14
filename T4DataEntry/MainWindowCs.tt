@@ -47,6 +47,15 @@ namespace T4DataEntry
 				WriteLine($"Load{table.Key}();");
 			}
 			PopIndent();
+
+
+			foreach (var table in tables)
+			{
+				var cols = string.Join(", ", table.Value.Select(c => $"{c.Name}:{c.Type}"));
+				WriteLine($"// {table.Key}: {cols}");
+			}
+
+
 			#>
 
 			// input element validation
@@ -61,8 +70,7 @@ namespace T4DataEntry
 					switch (column.Type)
 					{
 						case "int":
-							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
-							break;
+						case "double":
 						case "Guid":
 							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
 							break;
@@ -133,7 +141,9 @@ namespace T4DataEntry
 				switch (column.Type)
 				{
 					case "DateTime":
+					case "DateTime?":
 					case "bool":
+					case "bool?":
 						break;
 					default:
 						WriteLine($"{column.UIElementName}.ItemsSource = records.Select(r => r.{column.Name}).ToList();");
@@ -178,8 +188,9 @@ private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		WriteLine($"private bool Is{table.Key}Valid()");
 		WriteLine("{");
 		PushIndent("    ");
-
+		
 		if (table.Value.Any(c => c.Type == "int")) WriteLine("int i;");
+		if (table.Value.Any(c => c.Type == "double")) WriteLine("double d;");
 		if (table.Value.Any(c => c.Type == "Guid")) WriteLine("Guid g;");
 
 		foreach (var column in table.Value)
@@ -188,23 +199,16 @@ private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 			switch (column.Type)
 			{
 				case "int":
-					if (column.IsNullable)
-					{
-						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !int.TryParse({column.UIElementName}.Text, out i)) return false;");
-					}
-					else
-					{
-						WriteLine($"if (!int.TryParse({column.UIElementName}.Text, out i)) return false;");
-					}
-					break;
+				case "double":
 				case "Guid":
+					var letter = column.Type.ToLower()[0];
 					if (column.IsNullable)
 					{
-						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !Guid.TryParse({column.UIElementName}.Text, out g)) return false;");
+						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !{column.Type}.TryParse({column.UIElementName}.Text, out {letter})) return false;");
 					}
 					else
 					{
-						WriteLine($"if (!Guid.TryParse({column.UIElementName}.Text, out g)) return false;");
+						WriteLine($"if (!{column.Type}.TryParse({column.UIElementName}.Text, out {letter})) return false;");
 					}
 					break;
 				case "string":
@@ -248,6 +252,8 @@ foreach (var table in tables)
 				break;
 			case "int":
 			case "int?":
+			case "double":
+			case "double?":
 			case "Guid":
 			case "Guid?":
 				WriteLine($"{column.UIElementName}.Text = string.Empty;");
@@ -256,10 +262,11 @@ foreach (var table in tables)
 				WriteLine($"{column.UIElementName}.SelectedDate = DateTime.Today;");
 				break;
 			case "bool":
-				WriteLine($"{column.UIElementName}.IsChecked = false;");
+			case "bool?":
+				WriteLine($"{column.UIElementName}.IsChecked = default({column.Type});");
 				break;
 			default:
-				throw new Exception("Unhandled type: " + column.Type);
+				throw new Exception("Unhandled type in SelectionChanged (null): " + column.Type);
 		}
 	}
 	PopIndent();
@@ -295,6 +302,8 @@ foreach (var table in tables)
 					break;
 				case "int":
 				case "int?":
+				case "double":
+				case "double?":
 					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
 					break;
 				case "Guid":
@@ -305,10 +314,11 @@ foreach (var table in tables)
 					WriteLine($"{column.UIElementName}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
 					break;
 				case "bool":
+				case "bool?":
 					WriteLine($"{column.UIElementName}.IsChecked = {table.Key.ToLower()}.{column.Name};");
 					break;
 				default:
-					throw new Exception("Unhandled type: " + column.Type);
+					throw new Exception("Unhandled type in SelectionChanged (value): " + column.Type);
 			}
 		}
 	}
@@ -336,6 +346,8 @@ foreach (var table in tables)
 			
 		if (columns.Any(c => c.Type == "int?" && !c.IsPrimaryKey))
 			WriteLine("int i;");
+		if (columns.Any(c => c.Type == "double?" && !c.IsPrimaryKey))
+			WriteLine("double i;");
 		if (columns.Any(c => c.Type == "Guid?" && !c.IsPrimaryKey))
 			WriteLine("Guid g;");
 
@@ -353,6 +365,7 @@ foreach (var table in tables)
 						WriteLine($"{column.UIElementName}.Text;");
 						break;
 					case "int?":
+					case "double?":
 						WriteLine($"default({column.Type});");		
 						break;
 					case "Guid":
@@ -362,6 +375,9 @@ foreach (var table in tables)
 						break;
 					case "int":
 						WriteLine("int.Parse({column.UIElementName}.Text);");
+						break;
+					case "double":
+						WriteLine("double.Parse({column.UIElementName}.Text);");
 						break;
 					default:
 						break;
@@ -397,6 +413,12 @@ foreach (var table in tables)
 						break;
 					case "int":
 						WriteLine($"int _{column.Name} = int.Parse({column.UIElementName}.Text);");
+						break;
+					case "double?":
+						WriteLine($"double? _{column.Name} = double.TryParse({column.UIElementName}.Text, out i) ? i : (double?)null;");
+						break;
+					case "double":
+						WriteLine($"double _{column.Name} = double.Parse({column.UIElementName}.Text);");
 						break;
 					case "Guid?":
 						WriteLine($"Guid? _{column.Name} = Guid.TryParse({column.UIElementName}.Text, out g) ? g : (Guid?)null;");

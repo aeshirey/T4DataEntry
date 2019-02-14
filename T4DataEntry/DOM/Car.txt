@@ -4,3 +4,4 @@
 Year:int
 PersonId:Guid?
 CompanyId:Guid?
+IsManualTransmission:bool

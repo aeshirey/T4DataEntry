@@ -88,17 +88,18 @@
 				}
 				else
 				{
-					if (column.Type == "DateTime")
+					switch (column.Type)
 					{
-						WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
-					}
-					else if (column.Type == "bool")
-					{
-						WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
-					}
-					else
-					{
-						WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+						case "DateTime":
+							WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+							break;
+						case "bool":
+						case "bool?":
+							WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsThreeState=\"{column.Type == "bool?"}\" />");
+							break;
+						default:
+							WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+							break;
 					}
 				}
 				WriteLine("");

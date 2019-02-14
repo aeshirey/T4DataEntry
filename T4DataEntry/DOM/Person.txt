@@ -2,3 +2,4 @@ PersonId:Guid
 Name:string
 Age:int
 Hometown:string
+HeightCm:double

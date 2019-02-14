@@ -35,6 +35,10 @@ namespace T4DataEntry
             LoadCompany();
             LoadEmployee();
             LoadPerson();
+// Car: CarId:string, Make:string, Model:string, Year:int, PersonId:Guid?, CompanyId:Guid?, IsManualTransmission:bool
+// Company: CompanyId:Guid, Name:string, StockSymbol:string, Founded:DateTime
+// Employee: EmployeeId:Guid, PersonId:Guid, CompanyId:Guid, Title:string, OfficeNumber:int?
+// Person: PersonId:Guid, Name:string, Age:int, Hometown:string, HeightCm:double
 
 			// input element validation
 			// Car:
@@ -52,6 +56,7 @@ namespace T4DataEntry
             // Person:
             cbPerson_PersonId.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
             cbPerson_Age.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
+            cbPerson_HeightCm.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
 
         }
 		    
@@ -109,6 +114,7 @@ namespace T4DataEntry
             cbPerson_Name.ItemsSource = records.Select(r => r.Name).ToList();
             cbPerson_Age.ItemsSource = records.Select(r => r.Age).ToList();
             cbPerson_Hometown.ItemsSource = records.Select(r => r.Hometown).ToList();
+            cbPerson_HeightCm.ItemsSource = records.Select(r => r.HeightCm).ToList();
             btnPerson_Save.IsEnabled = false;
         }
         #endregion
@@ -162,9 +168,11 @@ namespace T4DataEntry
         private bool IsPersonValid()
         {
             int i;
+            double d;
             Guid g;
             if (!Guid.TryParse(cbPerson_PersonId.Text, out g)) return false;
             if (!int.TryParse(cbPerson_Age.Text, out i)) return false;
+            if (!double.TryParse(cbPerson_HeightCm.Text, out d)) return false;
             return true;
         }
 
@@ -183,6 +191,7 @@ namespace T4DataEntry
                 cbCar_Year.Text = string.Empty;
                 cbCar_PersonId.Text = string.Empty;
                 cbCar_CompanyId.Text = string.Empty;
+                cbCar_IsManualTransmission.IsChecked = default(bool);
             }
             else
             {
@@ -201,6 +210,7 @@ namespace T4DataEntry
                    if ((item as Company).CompanyId == car.CompanyId)
                       cbCar_CompanyId.SelectedItem = item;
                 }
+                cbCar_IsManualTransmission.IsChecked = car.IsManualTransmission;
             }
         }
         private void Company_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -260,6 +270,7 @@ namespace T4DataEntry
                 cbPerson_Name.Text = default(string);
                 cbPerson_Age.Text = string.Empty;
                 cbPerson_Hometown.Text = default(string);
+                cbPerson_HeightCm.Text = string.Empty;
             }
             else
             {
@@ -268,6 +279,7 @@ namespace T4DataEntry
                 cbPerson_Name.Text = person.Name;
                 cbPerson_Age.Text = person.Age.ToString();
                 cbPerson_Hometown.Text = person.Hometown;
+                cbPerson_HeightCm.Text = person.HeightCm.ToString();
             }
         }
         #endregion
@@ -286,6 +298,7 @@ namespace T4DataEntry
             int _Year = int.Parse(cbCar_Year.Text);
             var _PersonId = (cbCar_PersonId.SelectedItem as Person)?.PersonId;
             var _CompanyId = (cbCar_CompanyId.SelectedItem as Company)?.CompanyId;
+            bool _IsManualTransmission = cbCar_IsManualTransmission.IsChecked ?? false;
 
             var record = new Car
             {
@@ -295,6 +308,7 @@ namespace T4DataEntry
                 Year = _Year,
                 PersonId = _PersonId,
                 CompanyId = _CompanyId,
+                IsManualTransmission = _IsManualTransmission,
             };
 
             UserDB.InsertOrReplace(record);
@@ -354,6 +368,7 @@ namespace T4DataEntry
             string _Name = cbPerson_Name.Text;
             int _Age = int.Parse(cbPerson_Age.Text);
             string _Hometown = cbPerson_Hometown.Text;
+            double _HeightCm = double.Parse(cbPerson_HeightCm.Text);
 
             var record = new Person
             {
@@ -361,6 +376,7 @@ namespace T4DataEntry
                 Name = _Name,
                 Age = _Age,
                 Hometown = _Hometown,
+                HeightCm = _HeightCm,
             };
 
             UserDB.InsertOrReplace(record);
@@ -381,6 +397,7 @@ namespace T4DataEntry
         public int Year { get; set; }
         public Guid? PersonId { get; set; }
         public Guid? CompanyId { get; set; }
+        public bool IsManualTransmission { get; set; }
         public override string ToString() => $"Car(Make={Make}, Model={Model})";
     }
 
@@ -412,6 +429,7 @@ namespace T4DataEntry
         public string Name { get; set; }
         public int Age { get; set; }
         public string Hometown { get; set; }
+        public double HeightCm { get; set; }
         public override string ToString() => Name;
     }
 

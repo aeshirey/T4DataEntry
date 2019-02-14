@@ -21,6 +21,7 @@
                     <DataGridTextColumn Header="Make" IsReadOnly="True" Binding="{Binding Make}" Width="1*" />
                     <DataGridTextColumn Header="Model" IsReadOnly="True" Binding="{Binding Model}" Width="1*" />
                     <DataGridTextColumn Header="Year" IsReadOnly="True" Binding="{Binding Year}" Width="1*" />
+                    <DataGridTextColumn Header="IsManualTransmission" IsReadOnly="True" Binding="{Binding IsManualTransmission}" Width="1*" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -30,6 +31,7 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
@@ -57,7 +59,10 @@
             <Label Content="CompanyId" Grid.Row="5" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbCar_CompanyId" Margin="5,5,5,5" IsEditable="False" />
 
-            <Button Grid.Row="6" Grid.Column="1" x:Name="btnCar_Save" Margin="5,5,5,5" Content="Save" Click="Car_Click" />
+            <Label Content="IsManualTransmission" Grid.Row="6" Grid.Column="0" Margin="5,5,5,5"/>
+            <CheckBox Grid.Row="6" Grid.Column="1" x:Name="cbCar_IsManualTransmission" Margin="5,5,5,5" IsThreeState="False" />
+
+            <Button Grid.Row="7" Grid.Column="1" x:Name="btnCar_Save" Margin="5,5,5,5" Content="Save" Click="Car_Click" />
         </Grid>
         </Grid>
     </TabItem>
@@ -167,6 +172,7 @@
                     <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
                     <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
                     <DataGridTextColumn Header="Hometown" IsReadOnly="True" Binding="{Binding Hometown}" Width="1*" />
+                    <DataGridTextColumn Header="HeightCm" IsReadOnly="True" Binding="{Binding HeightCm}" Width="1*" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -176,6 +182,7 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
@@ -195,7 +202,10 @@
             <Label Content="Hometown" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbPerson_Hometown" Margin="5,5,5,5" IsEditable="True" />
 
-            <Button Grid.Row="4" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
+            <Label Content="HeightCm" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbPerson_HeightCm" Margin="5,5,5,5" IsEditable="True" />
+
+            <Button Grid.Row="5" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
         </Grid>
         </Grid>
     </TabItem>
