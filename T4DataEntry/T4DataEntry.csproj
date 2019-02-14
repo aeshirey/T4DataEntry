@@ -103,6 +103,7 @@
     <Resource Include="DOM\Employee.txt" />
     <Resource Include="DOM\Person.txt" />
     <Resource Include="DOM\Car.txt" />
+    <Resource Include="DOM\Tenure.txt" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

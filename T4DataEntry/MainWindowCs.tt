@@ -70,12 +70,21 @@ namespace T4DataEntry
 					switch (column.Type)
 					{
 						case "int":
+						case "int?":
 						case "double":
-						case "Guid":
+						case "double?":
 							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
 							break;
+						case "Guid":
+						case "Guid?":
+							WriteLine($"{column.UIElementName}.SelectionChanged += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
+							break;
+						case "DateTime":
+						case "DateTime?":
+							WriteLine($"{column.UIElementName}.SelectedDateChanged += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
+							break;
 						case "string":
-							if (!column.CanBeEmptyString)
+							//if (!column.CanBeEmptyString)
 							{
 								WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
 							}
@@ -126,7 +135,10 @@ namespace T4DataEntry
 						if (otherColumn.Name == column.Name)
 						{
 							// update the referenced table
-							WriteLine($"{otherColumn.UIElementName}.ItemsSource = records;");
+							if (otherColumn.Type == "Guid?")
+								WriteLine($"{otherColumn.UIElementName}.ItemsSource = (new {table.Key}[] {{ null }}).Concat(records);");
+							else
+								WriteLine($"{otherColumn.UIElementName}.ItemsSource = records;");
 						}
 					}
 				}
@@ -189,18 +201,18 @@ private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		WriteLine("{");
 		PushIndent("    ");
 		
-		if (table.Value.Any(c => c.Type == "int")) WriteLine("int i;");
-		if (table.Value.Any(c => c.Type == "double")) WriteLine("double d;");
-		if (table.Value.Any(c => c.Type == "Guid")) WriteLine("Guid g;");
+		if (table.Value.Any(c => !c.IsPrimaryKey && c.Type == "int")) WriteLine("int i;");
+		if (table.Value.Any(c => !c.IsPrimaryKey && c.Type == "double")) WriteLine("double d;");
+		if (table.Value.Any(c => !c.IsPrimaryKey && c.Type == "Guid")) WriteLine("Guid g;");
 
 		foreach (var column in table.Value)
 		{
+			if (column.IsPrimaryKey) continue;
 			var t = (column.IsNullable ? "Nullable" : string.Empty) + column.Type;
 			switch (column.Type)
 			{
 				case "int":
 				case "double":
-				case "Guid":
 					var letter = column.Type.ToLower()[0];
 					if (column.IsNullable)
 					{
@@ -209,6 +221,12 @@ private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 					else
 					{
 						WriteLine($"if (!{column.Type}.TryParse({column.UIElementName}.Text, out {letter})) return false;");
+					}
+					break;
+				case "Guid":
+					if (!column.IsNullable)
+					{
+						WriteLine($"if ({column.UIElementName}.SelectedItem == null) return false;");
 					}
 					break;
 				case "string":
@@ -261,6 +279,9 @@ foreach (var table in tables)
 			case "DateTime":
 				WriteLine($"{column.UIElementName}.SelectedDate = DateTime.Today;");
 				break;
+			case "DateTime?":
+				WriteLine($"{column.UIElementName}.SelectedDate = null;");
+				break;
 			case "bool":
 			case "bool?":
 				WriteLine($"{column.UIElementName}.IsChecked = default({column.Type});");
@@ -311,6 +332,7 @@ foreach (var table in tables)
 					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
 					break;
 				case "DateTime":
+				case "DateTime?":
 					WriteLine($"{column.UIElementName}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
 					break;
 				case "bool":

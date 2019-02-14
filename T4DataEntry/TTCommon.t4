@@ -3,6 +3,7 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#+
 public Dictionary<string, List<Column>> GetTables()
@@ -21,16 +22,7 @@ public Dictionary<string, List<Column>> GetTables()
 
 		foreach (var c in columns)
 		{
-			//var col = new Column
-			//{
-			//	Name = c[0].Replace("*", string.Empty),
-			//	Type = c[1],
-			//	IsPrimaryKey = c[0] == tableName + "Id",
-			//	IsDisplayable = c[0].StartsWith("*")
-			//};
-			//
-			//tables[tableName].Add(col);
-			tables[tableName].Add(new Column(tableName, c[0], c[1]));
+			tables[tableName].Add(new Column(tableName, c));
 		}
 
 		if (tables[tableName].Count == 0)
@@ -61,8 +53,11 @@ public class Column
 	
 	public bool IsId {get => Name.EndsWith("Id"); }
 
-	public Column(string table, string name, string type)
+	public Column(string table, string[] configValues)
 	{
+		string name = configValues[0],
+			type = configValues[1];
+
 		this.Name = name.Replace("*", string.Empty);
 
 		this.IsNullable = type.EndsWith("?");
@@ -83,7 +78,7 @@ public class Column
 				break;
 		}
 
-		this.IsPrimaryKey  = name == table + "Id";
+		this.IsPrimaryKey  = this.Name == table + "Id";
 		this.IsDisplayable = name.StartsWith("*");
 
 		switch (this.Type)

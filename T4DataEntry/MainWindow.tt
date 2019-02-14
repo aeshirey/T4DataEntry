@@ -91,6 +91,7 @@
 					switch (column.Type)
 					{
 						case "DateTime":
+						case "DateTime?":
 							WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
 							break;
 						case "bool":

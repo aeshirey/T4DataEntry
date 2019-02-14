@@ -35,28 +35,47 @@ namespace T4DataEntry
             LoadCompany();
             LoadEmployee();
             LoadPerson();
+            LoadTenure();
 // Car: CarId:string, Make:string, Model:string, Year:int, PersonId:Guid?, CompanyId:Guid?, IsManualTransmission:bool
 // Company: CompanyId:Guid, Name:string, StockSymbol:string, Founded:DateTime
 // Employee: EmployeeId:Guid, PersonId:Guid, CompanyId:Guid, Title:string, OfficeNumber:int?
 // Person: PersonId:Guid, Name:string, Age:int, Hometown:string, HeightCm:double
+// Tenure: PersonId:Guid, CompanyId:Guid?, StartDate:DateTime, EndDate:DateTime?
 
 			// input element validation
 			// Car:
+            cbCar_CarId.KeyUp += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
+            cbCar_Make.KeyUp += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
+            cbCar_Model.KeyUp += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
             cbCar_Year.KeyUp += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
+            cbCar_PersonId.SelectionChanged += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
+            cbCar_CompanyId.SelectionChanged += (sender, e) => { btnCar_Save.IsEnabled = IsCarValid(); };
 
             // Company:
-            cbCompany_CompanyId.KeyUp += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
+            cbCompany_CompanyId.SelectionChanged += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
             cbCompany_Name.KeyUp += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
+            cbCompany_StockSymbol.KeyUp += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
+            dtCompany_Founded.SelectedDateChanged += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
 
             // Employee:
-            cbEmployee_EmployeeId.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
-            cbEmployee_PersonId.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
-            cbEmployee_CompanyId.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_EmployeeId.SelectionChanged += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_PersonId.SelectionChanged += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_CompanyId.SelectionChanged += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_Title.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
+            cbEmployee_OfficeNumber.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
 
             // Person:
-            cbPerson_PersonId.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
+            cbPerson_PersonId.SelectionChanged += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
+            cbPerson_Name.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
             cbPerson_Age.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
+            cbPerson_Hometown.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
             cbPerson_HeightCm.KeyUp += (sender, e) => { btnPerson_Save.IsEnabled = IsPersonValid(); };
+
+            // Tenure:
+            cbTenure_PersonId.SelectionChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
+            cbTenure_CompanyId.SelectionChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
+            dtTenure_StartDate.SelectedDateChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
+            dtTenure_EndDate.SelectedDateChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
 
         }
 		    
@@ -83,8 +102,9 @@ namespace T4DataEntry
 
             // add all records back into the DataGrid
             records.ForEach(r => dgCompany.Items.Add(r));
-            cbCar_CompanyId.ItemsSource = records;
+            cbCar_CompanyId.ItemsSource = (new Company[] { null }).Concat(records);
             cbEmployee_CompanyId.ItemsSource = records;
+            cbTenure_CompanyId.ItemsSource = (new Company[] { null }).Concat(records);
             cbCompany_Name.ItemsSource = records.Select(r => r.Name).ToList();
             cbCompany_StockSymbol.ItemsSource = records.Select(r => r.StockSymbol).ToList();
             btnCompany_Save.IsEnabled = false;
@@ -109,13 +129,24 @@ namespace T4DataEntry
 
             // add all records back into the DataGrid
             records.ForEach(r => dgPerson.Items.Add(r));
-            cbCar_PersonId.ItemsSource = records;
+            cbCar_PersonId.ItemsSource = (new Person[] { null }).Concat(records);
             cbEmployee_PersonId.ItemsSource = records;
+            cbTenure_PersonId.ItemsSource = records;
             cbPerson_Name.ItemsSource = records.Select(r => r.Name).ToList();
             cbPerson_Age.ItemsSource = records.Select(r => r.Age).ToList();
             cbPerson_Hometown.ItemsSource = records.Select(r => r.Hometown).ToList();
             cbPerson_HeightCm.ItemsSource = records.Select(r => r.HeightCm).ToList();
             btnPerson_Save.IsEnabled = false;
+        }
+        private void LoadTenure()
+        {
+            // remove all Tenure entries from its DataGrid and pull the new set from the database
+            dgTenure.Items.Clear();
+            var records = UserDB.Table<Tenure>().ToList();
+
+            // add all records back into the DataGrid
+            records.ForEach(r => dgTenure.Items.Add(r));
+            btnTenure_Save.IsEnabled = false;
         }
         #endregion
         
@@ -150,8 +181,6 @@ namespace T4DataEntry
 
         private bool IsCompanyValid()
         {
-            Guid g;
-            if (!Guid.TryParse(cbCompany_CompanyId.Text, out g)) return false;
             if (string.IsNullOrEmpty(cbCompany_Name.Text)) return false;
             return true;
         }
@@ -159,9 +188,8 @@ namespace T4DataEntry
         private bool IsEmployeeValid()
         {
             Guid g;
-            if (!Guid.TryParse(cbEmployee_EmployeeId.Text, out g)) return false;
-            if (!Guid.TryParse(cbEmployee_PersonId.Text, out g)) return false;
-            if (!Guid.TryParse(cbEmployee_CompanyId.Text, out g)) return false;
+            if (cbEmployee_PersonId.SelectedItem == null) return false;
+            if (cbEmployee_CompanyId.SelectedItem == null) return false;
             return true;
         }
 
@@ -169,10 +197,15 @@ namespace T4DataEntry
         {
             int i;
             double d;
-            Guid g;
-            if (!Guid.TryParse(cbPerson_PersonId.Text, out g)) return false;
             if (!int.TryParse(cbPerson_Age.Text, out i)) return false;
             if (!double.TryParse(cbPerson_HeightCm.Text, out d)) return false;
+            return true;
+        }
+
+        private bool IsTenureValid()
+        {
+            Guid g;
+            if (cbTenure_PersonId.SelectedItem == null) return false;
             return true;
         }
 
@@ -282,6 +315,33 @@ namespace T4DataEntry
                 cbPerson_HeightCm.Text = person.HeightCm.ToString();
             }
         }
+        private void Tenure_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // get the Tenure object
+            if (e.AddedItems.Count == 0)
+            {
+                cbTenure_PersonId.Text = string.Empty;
+                cbTenure_CompanyId.Text = string.Empty;
+                dtTenure_StartDate.SelectedDate = DateTime.Today;
+                dtTenure_EndDate.SelectedDate = null;
+            }
+            else
+            {
+                Tenure tenure = e.AddedItems[0] as Tenure;
+                foreach (var item in cbTenure_PersonId.Items)
+                {
+                   if ((item as Person).PersonId == tenure.PersonId)
+                      cbTenure_PersonId.SelectedItem = item;
+                }
+                foreach (var item in cbTenure_CompanyId.Items)
+                {
+                   if ((item as Company).CompanyId == tenure.CompanyId)
+                      cbTenure_CompanyId.SelectedItem = item;
+                }
+                dtTenure_StartDate.SelectedDate = tenure.StartDate;
+                dtTenure_EndDate.SelectedDate = tenure.EndDate;
+            }
+        }
         #endregion
         
         
@@ -383,6 +443,28 @@ namespace T4DataEntry
             LoadPerson();
         }
 
+        private void Tenure_Click(object sender, RoutedEventArgs e)
+        {
+            Guid g;
+            Tenure selected = (Tenure)dgTenure.SelectedItem;
+            // read each Tenure column from its individual controls
+            var _PersonId = (cbTenure_PersonId.SelectedItem as Person).PersonId;
+            var _CompanyId = (cbTenure_CompanyId.SelectedItem as Company)?.CompanyId;
+            DateTime _StartDate = dtTenure_StartDate.SelectedDate ?? DateTime.MinValue;
+            DateTime? _EndDate = dtTenure_EndDate.SelectedDate;
+
+            var record = new Tenure
+            {
+                PersonId = _PersonId,
+                CompanyId = _CompanyId,
+                StartDate = _StartDate,
+                EndDate = _EndDate,
+            };
+
+            UserDB.InsertOrReplace(record);
+            LoadTenure();
+        }
+
     	#endregion
     	#endregion
     }
@@ -433,6 +515,14 @@ namespace T4DataEntry
         public override string ToString() => Name;
     }
 
+    public class Tenure
+    {
+        public Guid PersonId { get; set; }
+        public Guid? CompanyId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+    }
+
 	#endregion
 
 	
@@ -447,6 +537,7 @@ namespace T4DataEntry
             CreateTable<Company>();
             CreateTable<Employee>();
             CreateTable<Person>();
+            CreateTable<Tenure>();
 			Commit();
 		}
 	}

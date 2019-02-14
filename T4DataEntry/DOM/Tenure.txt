@@ -1,0 +1,4 @@
+﻿PersonId:Guid
+CompanyId:Guid?
+StartDate:DateTime
+EndDate:DateTime?

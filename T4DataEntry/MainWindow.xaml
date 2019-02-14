@@ -210,6 +210,50 @@
         </Grid>
     </TabItem>
 
+<TabItem x:Name="tabTenure" Header="Tenure" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
+    <Grid Grid.Row="0" Background="#FFE5E5E5">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#FFE5E5E5">
+            <DataGrid x:Name="dgTenure" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Tenure_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="StartDate" IsReadOnly="True" Binding="{Binding StartDate}" Width="1*" />
+                    <DataGridTextColumn Header="EndDate" IsReadOnly="True" Binding="{Binding EndDate}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1" Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="PersonId" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbTenure_PersonId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="CompanyId" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbTenure_CompanyId" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="StartDate" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" x:Name="dtTenure_StartDate" Margin="5,5,5,5" />
+
+            <Label Content="EndDate" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dtTenure_EndDate" Margin="5,5,5,5" />
+
+            <Button Grid.Row="4" Grid.Column="1" x:Name="btnTenure_Save" Margin="5,5,5,5" Content="Save" Click="Tenure_Click" />
+        </Grid>
+        </Grid>
+    </TabItem>
+
 		        
 	</TabControl>
     </Grid>
