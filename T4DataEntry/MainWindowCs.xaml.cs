@@ -157,18 +157,64 @@ namespace T4DataEntry
         // https://stackoverflow.com/questions/10667002/
         private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-        	if (sender != null)
+        	DataGrid grid = sender as DataGrid;
+        	if (grid == null) return;
+        
+        	if (grid.SelectedItems != null && grid.SelectedItems.Count == 1)
         	{
-        		DataGrid grid = sender as DataGrid;
-        		if (grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+        		DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+        		if (!dgr.IsMouseOver)
         		{
-        			DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-        			if (!dgr.IsMouseOver)
-        			{
-        				(dgr as DataGridRow).IsSelected = false;
-        			}
+        			(dgr as DataGridRow).IsSelected = false;
         		}
-        	}        
+        	}    
+        }
+        
+        private void DataGrid_MouseDown(object sender, KeyEventArgs e)
+        {
+        	// currently, we're only handling delete events
+            if (e.Key != Key.Delete)
+        		return;
+        
+        	DataGrid grid = sender as DataGrid;
+        	if (grid == null) return;
+        
+        	// can't delete if we don't have a selected item
+        	if (grid.SelectedItems == null || grid.SelectedItems.Count != 1)
+        		return;
+        
+            var response = MessageBox.Show("Are you sure you want to delete this record? This cannot be undone, and relationships are not deleted.", "Delete record?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            if (response != MessageBoxResult.Yes)
+        		return;
+        
+        	object item = grid.SelectedItem;
+        
+        	// reload the appropriate table
+            if (item is Car)
+            {
+                UserDB.Delete((Car)item);
+                LoadCar();
+            }
+            else if (item is Company)
+            {
+                UserDB.Delete((Company)item);
+                LoadCompany();
+            }
+            else if (item is Employee)
+            {
+                UserDB.Delete((Employee)item);
+                LoadEmployee();
+            }
+            else if (item is Person)
+            {
+                UserDB.Delete((Person)item);
+                LoadPerson();
+            }
+            else if (item is Tenure)
+            {
+                UserDB.Delete((Tenure)item);
+                LoadTenure();
+            }
         }
         
         #region Input validation events

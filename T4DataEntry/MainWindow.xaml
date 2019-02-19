@@ -16,7 +16,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgCar" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Car_SelectionChanged">
+            <DataGrid x:Name="dgCar" Margin="5,5,5,5" KeyUp="DataGrid_MouseDown" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Car_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Make" IsReadOnly="True" Binding="{Binding Make}" Width="1*" />
                     <DataGridTextColumn Header="Model" IsReadOnly="True" Binding="{Binding Model}" Width="1*" />
@@ -74,7 +74,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgCompany" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Company_SelectionChanged">
+            <DataGrid x:Name="dgCompany" Margin="5,5,5,5" KeyUp="DataGrid_MouseDown" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Company_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
                     <DataGridTextColumn Header="StockSymbol" IsReadOnly="True" Binding="{Binding StockSymbol}" Width="1*" />
@@ -119,7 +119,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgEmployee" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Employee_SelectionChanged">
+            <DataGrid x:Name="dgEmployee" Margin="5,5,5,5" KeyUp="DataGrid_MouseDown" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Employee_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Title" IsReadOnly="True" Binding="{Binding Title}" Width="1*" />
                     <DataGridTextColumn Header="OfficeNumber" IsReadOnly="True" Binding="{Binding OfficeNumber}" Width="1*" />
@@ -167,7 +167,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgPerson" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
+            <DataGrid x:Name="dgPerson" Margin="5,5,5,5" KeyUp="DataGrid_MouseDown" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
                     <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
@@ -217,7 +217,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgTenure" Margin="5,5,5,5" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Tenure_SelectionChanged">
+            <DataGrid x:Name="dgTenure" Margin="5,5,5,5" KeyUp="DataGrid_MouseDown" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Tenure_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="StartDate" IsReadOnly="True" Binding="{Binding StartDate}" Width="1*" />
                     <DataGridTextColumn Header="EndDate" IsReadOnly="True" Binding="{Binding EndDate}" Width="1*" />

@@ -40,7 +40,7 @@
 
             WriteLine("<Grid Grid.Row=\"0\" Background=\"#FFE5E5E5\">");
 			PushIndent("    ");
-			WriteLine($"<DataGrid x:Name=\"dg{table.Key}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" MouseLeftButtonDown=\"DataGrid_MouseLeftButtonDown\" SelectionChanged=\"{table.Key}_SelectionChanged\">");
+			WriteLine($"<DataGrid x:Name=\"dg{table.Key}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"DataGrid_MouseDown\" MouseLeftButtonDown=\"DataGrid_MouseLeftButtonDown\" SelectionChanged=\"{table.Key}_SelectionChanged\">");
 			WriteLine("    <DataGrid.Columns>");
 			foreach (var column in table.Value)
 			{
