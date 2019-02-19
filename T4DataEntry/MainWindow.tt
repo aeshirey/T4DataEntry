@@ -40,7 +40,7 @@
 
             WriteLine("<Grid Grid.Row=\"0\" Background=\"#FFE5E5E5\">");
 			PushIndent("    ");
-			WriteLine($"<DataGrid x:Name=\"dg{table.Key}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"DataGrid_MouseDown\" MouseLeftButtonDown=\"DataGrid_MouseLeftButtonDown\" SelectionChanged=\"{table.Key}_SelectionChanged\">");
+			WriteLine($"<DataGrid x:Name=\"dg{table.Key}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"DataGrid_KeyUp\" MouseLeftButtonDown=\"DataGrid_MouseLeftButtonDown\" SelectionChanged=\"{table.Key}_SelectionChanged\">");
 			WriteLine("    <DataGrid.Columns>");
 			foreach (var column in table.Value)
 			{
@@ -84,7 +84,7 @@
 
 				if (column.IsPrimaryKey)
 				{
-					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{column.Type == "string"}\" />");
+					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"{table.Key}_KeyUp\" IsEditable=\"{column.Type == "string"}\" />");
 				}
 				else
 				{
@@ -92,14 +92,14 @@
 					{
 						case "DateTime":
 						case "DateTime?":
-							WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+							WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Key}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
 							break;
 						case "bool":
 						case "bool?":
-							WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsThreeState=\"{column.Type == "bool?"}\" />");
+							WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Key}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsThreeState=\"{column.Type == "bool?"}\" />");
 							break;
 						default:
-							WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+							WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Key}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
 							break;
 					}
 				}

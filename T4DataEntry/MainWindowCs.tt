@@ -192,7 +192,7 @@ private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 	}    
 }
 
-private void DataGrid_MouseDown(object sender, KeyEventArgs e)
+private void DataGrid_KeyUp(object sender, KeyEventArgs e)
 {
 	// currently, we're only handling delete events
     if (e.Key != Key.Delete)
@@ -240,22 +240,21 @@ private void DataGrid_MouseDown(object sender, KeyEventArgs e)
 		WriteLine("{");
 		PushIndent("    ");
 		
-		if (table.Value.Any(c => !c.IsPrimaryKey && c.Type == "int")) WriteLine("int i;");
-		if (table.Value.Any(c => !c.IsPrimaryKey && c.Type == "double")) WriteLine("double d;");
-		if (table.Value.Any(c => !c.IsPrimaryKey && c.Type == "Guid")) WriteLine("Guid g;");
+		if (table.Value.Any(c => !c.IsPrimaryKey && c.BaseType == "int")) WriteLine("int i;");
+		if (table.Value.Any(c => !c.IsPrimaryKey && c.BaseType == "double")) WriteLine("double d;");
 
 		foreach (var column in table.Value)
 		{
 			if (column.IsPrimaryKey) continue;
 			var t = (column.IsNullable ? "Nullable" : string.Empty) + column.Type;
-			switch (column.Type)
+			switch (column.BaseType)
 			{
 				case "int":
 				case "double":
 					var letter = column.Type.ToLower()[0];
 					if (column.IsNullable)
 					{
-						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !{column.Type}.TryParse({column.UIElementName}.Text, out {letter})) return false;");
+						WriteLine($"if (!string.IsNullOrEmpty({column.UIElementName}.Text) && !{column.BaseType}.TryParse({column.UIElementName}.Text, out {letter})) return false;");
 					}
 					else
 					{
@@ -284,8 +283,29 @@ private void DataGrid_MouseDown(object sender, KeyEventArgs e)
 		WriteLine("}");
 		WriteLine("");
 	}
+	WriteLine("#endregion");
+	WriteLine("");
+
+	// enter handling
+	WriteLine("#region Handle 'Enter' key for saving records");
+	foreach (var table in tables)
+	{
+		WriteLine($"private void {table.Key}_KeyUp(object sender, KeyEventArgs e)");
+		WriteLine("{");
+		PushIndent("    ");
+
+		WriteLine("if (e.Key != Key.Enter)");
+		WriteLine("    return;");
+		WriteLine("");
+
+		WriteLine($"if (btn{table.Key}_Save.IsEnabled && Is{table.Key}Valid())");
+		WriteLine($"    {table.Key}_Click(btn{table.Key}_Save, null);");
+
+		PopIndent();
+		WriteLine("}");
+	}
+	WriteLine("#endregion");
 	#>
-#endregion
 
 
 #region DataGrid selection changed
@@ -509,6 +529,36 @@ foreach (var table in tables)
 		WriteLine("");
 		WriteLine("UserDB.InsertOrReplace(record);");
 		WriteLine($"Load{table.Key}();");
+		WriteLine("");
+		WriteLine("// clear input elements");
+
+		foreach (var column in table.Value)
+		{
+			switch(column.Type)
+			{
+				case "string":
+					WriteLine($"{column.UIElementName}.Text = default({column.Type});");
+					break;
+				case "int":
+				case "int?":
+				case "double":
+				case "double?":
+				case "Guid":
+				case "Guid?":
+					WriteLine($"{column.UIElementName}.Text = string.Empty;");
+					break;
+				case "DateTime":
+					WriteLine($"{column.UIElementName}.SelectedDate = DateTime.Today;");
+					break;
+				case "DateTime?":
+					WriteLine($"{column.UIElementName}.SelectedDate = null;");
+					break;
+				case "bool":
+				case "bool?":
+					WriteLine($"{column.UIElementName}.IsChecked = default({column.Type});");
+					break;
+			}
+		}
 
 		PopIndent();
 		WriteLine("}");

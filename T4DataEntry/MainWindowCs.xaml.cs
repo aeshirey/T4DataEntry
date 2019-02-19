@@ -170,7 +170,7 @@ namespace T4DataEntry
         	}    
         }
         
-        private void DataGrid_MouseDown(object sender, KeyEventArgs e)
+        private void DataGrid_KeyUp(object sender, KeyEventArgs e)
         {
         	// currently, we're only handling delete events
             if (e.Key != Key.Delete)
@@ -233,9 +233,10 @@ namespace T4DataEntry
 
         private bool IsEmployeeValid()
         {
-            Guid g;
+            int i;
             if (cbEmployee_PersonId.SelectedItem == null) return false;
             if (cbEmployee_CompanyId.SelectedItem == null) return false;
+            if (!string.IsNullOrEmpty(cbEmployee_OfficeNumber.Text) && !int.TryParse(cbEmployee_OfficeNumber.Text, out i)) return false;
             return true;
         }
 
@@ -250,11 +251,53 @@ namespace T4DataEntry
 
         private bool IsTenureValid()
         {
-            Guid g;
             if (cbTenure_PersonId.SelectedItem == null) return false;
             return true;
         }
 
+        #endregion
+
+        #region Handle 'Enter' key for saving records
+        private void Car_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            if (btnCar_Save.IsEnabled && IsCarValid())
+                Car_Click(btnCar_Save, null);
+        }
+        private void Company_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            if (btnCompany_Save.IsEnabled && IsCompanyValid())
+                Company_Click(btnCompany_Save, null);
+        }
+        private void Employee_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            if (btnEmployee_Save.IsEnabled && IsEmployeeValid())
+                Employee_Click(btnEmployee_Save, null);
+        }
+        private void Person_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            if (btnPerson_Save.IsEnabled && IsPersonValid())
+                Person_Click(btnPerson_Save, null);
+        }
+        private void Tenure_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            if (btnTenure_Save.IsEnabled && IsTenureValid())
+                Tenure_Click(btnTenure_Save, null);
+        }
         #endregion
         
         
@@ -419,6 +462,15 @@ namespace T4DataEntry
 
             UserDB.InsertOrReplace(record);
             LoadCar();
+
+            // clear input elements
+            cbCar_CarId.Text = default(string);
+            cbCar_Make.Text = default(string);
+            cbCar_Model.Text = default(string);
+            cbCar_Year.Text = string.Empty;
+            cbCar_PersonId.Text = string.Empty;
+            cbCar_CompanyId.Text = string.Empty;
+            cbCar_IsManualTransmission.IsChecked = default(bool);
         }
 
         private void Company_Click(object sender, RoutedEventArgs e)
@@ -440,6 +492,12 @@ namespace T4DataEntry
 
             UserDB.InsertOrReplace(record);
             LoadCompany();
+
+            // clear input elements
+            cbCompany_CompanyId.Text = string.Empty;
+            cbCompany_Name.Text = default(string);
+            cbCompany_StockSymbol.Text = default(string);
+            dtCompany_Founded.SelectedDate = DateTime.Today;
         }
 
         private void Employee_Click(object sender, RoutedEventArgs e)
@@ -464,6 +522,13 @@ namespace T4DataEntry
 
             UserDB.InsertOrReplace(record);
             LoadEmployee();
+
+            // clear input elements
+            cbEmployee_EmployeeId.Text = string.Empty;
+            cbEmployee_PersonId.Text = string.Empty;
+            cbEmployee_CompanyId.Text = string.Empty;
+            cbEmployee_Title.Text = default(string);
+            cbEmployee_OfficeNumber.Text = string.Empty;
         }
 
         private void Person_Click(object sender, RoutedEventArgs e)
@@ -487,6 +552,13 @@ namespace T4DataEntry
 
             UserDB.InsertOrReplace(record);
             LoadPerson();
+
+            // clear input elements
+            cbPerson_PersonId.Text = string.Empty;
+            cbPerson_Name.Text = default(string);
+            cbPerson_Age.Text = string.Empty;
+            cbPerson_Hometown.Text = default(string);
+            cbPerson_HeightCm.Text = string.Empty;
         }
 
         private void Tenure_Click(object sender, RoutedEventArgs e)
@@ -509,6 +581,12 @@ namespace T4DataEntry
 
             UserDB.InsertOrReplace(record);
             LoadTenure();
+
+            // clear input elements
+            cbTenure_PersonId.Text = string.Empty;
+            cbTenure_CompanyId.Text = string.Empty;
+            dtTenure_StartDate.SelectedDate = DateTime.Today;
+            dtTenure_EndDate.SelectedDate = null;
         }
 
     	#endregion
