@@ -1,3 +1,4 @@
+#order:2
 CompanyId:Guid
 *Name:string!
 *StockSymbol:string?

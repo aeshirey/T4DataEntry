@@ -1,4 +1,5 @@
-﻿PersonId:Guid
-CompanyId:Guid?
+﻿#order:4
+EmployeeId:Guid:PK
+CompanyId:Guid:PK
 StartDate:DateTime
 EndDate:DateTime?

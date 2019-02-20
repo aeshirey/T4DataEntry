@@ -78,7 +78,9 @@ public class Table
 	public string Name;
 	public List<Column> Columns;
 
-	public string CleanName { get { return T4DE.CleanName(this.Name); } }
+	public string CleanName => T4DE.CleanName(this.Name);
+
+	public bool IsCompositePK => this.Columns.Count(c => c.IsPrimaryKey) > 1;
 
 	public Table(string name)
 	{
@@ -87,6 +89,24 @@ public class Table
 		this.Order = int.MaxValue;
 		this.DataGridHeight = 1;
 		this.InputElementsHeight = 1;
+	}
+
+	public string CreateTableStatement()
+	{
+		var sb = new StringBuilder();
+		sb.AppendFormat("create table if not exists \"{0}\"", this.Name);
+		sb.Append(" (");
+
+		foreach (var column in this.Columns)
+			sb.Append(column.ColumnDefinition() + ", ");
+
+		var pks = this.Columns
+			.Where(c => c.IsPrimaryKey)
+			.Select(c => c.Name);
+		sb.AppendFormat("primary key ({0})", string.Join(", ", pks));
+
+		sb.Append(")");
+		return sb.ToString();
 	}
 }
 
@@ -172,6 +192,41 @@ public class Column
 				throw new Exception($"Unhandled type for {table} UIElementName: '{this.Type}'");
 		}
 	}
+
+	public string ColumnDefinition()
+	{
+		var sb = new StringBuilder();
+		sb.AppendFormat("\"{0}\" ", this.Name);
+
+		switch (this.BaseType)
+		{
+			case "Guid":
+				sb.Append("varchar(36)");
+				break;
+			case "DateTime":
+				sb.Append("datetime");
+				break;
+			case "float":
+			case "double":
+				sb.Append("real");
+				break;
+			case "int":
+			case "bool":
+				sb.Append("integer");
+				break;
+			case "string":
+				sb.Append("varchar");
+				break;
+			default:
+				throw new Exception("Unhandled base type in Column.ColumnDefinition");
+		}
+
+		if (!this.IsNullable)
+			sb.Append(" not null");
+
+		return sb.ToString();
+	}
+
 }
 
 public static class T4DE

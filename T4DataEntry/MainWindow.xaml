@@ -9,19 +9,19 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
 	<TabControl>
-        <TabItem x:Name="tabCar" Header="Car" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
+        <TabItem x:Name="tabPerson" Header="Person" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
     <Grid Grid.Row="0" Background="#FFE5E5E5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="4*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgCar" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Car_SelectionChanged">
+            <DataGrid x:Name="dgPerson" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Make" IsReadOnly="True" Binding="{Binding Make}" Width="1*" />
-                    <DataGridTextColumn Header="Model" IsReadOnly="True" Binding="{Binding Model}" Width="1*" />
-                    <DataGridTextColumn Header="Year" IsReadOnly="True" Binding="{Binding Year}" Width="1*" />
-                    <DataGridTextColumn Header="Is Manual Transmission" IsReadOnly="True" Binding="{Binding IsManualTransmission}" Width="1*" />
+                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
+                    <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
+                    <DataGridTextColumn Header="Hometown" IsReadOnly="True" Binding="{Binding Hometown}" Width="1*" />
+                    <DataGridTextColumn Header="Height Cm" IsReadOnly="True" Binding="{Binding HeightCm}" Width="1*" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -37,32 +37,24 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Car Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbCar_CarId" Margin="5,5,5,5" KeyUp="Car_KeyUp" IsEditable="True" />
+            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbPerson_PersonId" Margin="5,5,5,5" KeyUp="Person_KeyUp" IsEditable="False" />
 
-            <Label Content="Make" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbCar_Make" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+            <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbPerson_Name" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Model" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbCar_Model" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+            <Label Content="Age" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbPerson_Age" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Year" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbCar_Year" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+            <Label Content="Hometown" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbPerson_Hometown" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Person Id" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbCar_PersonId" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+            <Label Content="Height Cm" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbPerson_HeightCm" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Company Id" Grid.Row="5" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbCar_CompanyId" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="False" />
-
-            <Label Content="Is Manual Transmission" Grid.Row="6" Grid.Column="0" Margin="5,5,5,5"/>
-            <CheckBox Grid.Row="6" Grid.Column="1" x:Name="cbCar_IsManualTransmission" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsThreeState="False" />
-
-            <Button Grid.Row="7" Grid.Column="1" x:Name="btnCar_Save" Margin="5,5,5,5" Content="Save" Click="Car_Click" />
+            <Button Grid.Row="5" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
         </Grid>
         </Grid>
     </TabItem>
@@ -144,7 +136,7 @@
             <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbEmployee_EmployeeId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
 
             <Label Content="Person Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbEmployee_PersonId" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbEmployee_PersonId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
 
             <Label Content="Company Id" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbEmployee_CompanyId" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="False" />
@@ -156,56 +148,6 @@
             <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbEmployee_OfficeNumber" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
             <Button Grid.Row="5" Grid.Column="1" x:Name="btnEmployee_Save" Margin="5,5,5,5" Content="Save" Click="Employee_Click" />
-        </Grid>
-        </Grid>
-    </TabItem>
-
-<TabItem x:Name="tabPerson" Header="Person" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
-    <Grid Grid.Row="0" Background="#FFE5E5E5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgPerson" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
-                    <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
-                    <DataGridTextColumn Header="Hometown" IsReadOnly="True" Binding="{Binding Hometown}" Width="1*" />
-                    <DataGridTextColumn Header="Height Cm" IsReadOnly="True" Binding="{Binding HeightCm}" Width="1*" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-        <Grid Grid.Row="1" Background="#FFE5E5E5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="3*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-
-            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbPerson_PersonId" Margin="5,5,5,5" KeyUp="Person_KeyUp" IsEditable="False" />
-
-            <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbPerson_Name" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
-
-            <Label Content="Age" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbPerson_Age" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
-
-            <Label Content="Hometown" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbPerson_Hometown" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
-
-            <Label Content="Height Cm" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbPerson_HeightCm" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
-
-            <Button Grid.Row="5" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
         </Grid>
         </Grid>
     </TabItem>
@@ -237,11 +179,11 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbTenure_PersonId" KeyUp="Tenure_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+            <Label Content="Employee Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbTenure_EmployeeId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />
 
             <Label Content="Company Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbTenure_CompanyId" KeyUp="Tenure_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbTenure_CompanyId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />
 
             <Label Content="Start Date" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
             <DatePicker Grid.Row="2" Grid.Column="1" x:Name="dtTenure_StartDate" KeyUp="Tenure_KeyUp" Margin="5,5,5,5" />
@@ -250,6 +192,64 @@
             <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dtTenure_EndDate" KeyUp="Tenure_KeyUp" Margin="5,5,5,5" />
 
             <Button Grid.Row="4" Grid.Column="1" x:Name="btnTenure_Save" Margin="5,5,5,5" Content="Save" Click="Tenure_Click" />
+        </Grid>
+        </Grid>
+    </TabItem>
+
+<TabItem x:Name="tabCar" Header="Car" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
+    <Grid Grid.Row="0" Background="#FFE5E5E5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="4*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#FFE5E5E5">
+            <DataGrid x:Name="dgCar" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Car_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Make" IsReadOnly="True" Binding="{Binding Make}" Width="1*" />
+                    <DataGridTextColumn Header="Model" IsReadOnly="True" Binding="{Binding Model}" Width="1*" />
+                    <DataGridTextColumn Header="Year" IsReadOnly="True" Binding="{Binding Year}" Width="1*" />
+                    <DataGridTextColumn Header="Is Manual Transmission" IsReadOnly="True" Binding="{Binding IsManualTransmission}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1" Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Car Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbCar_CarId" Margin="5,5,5,5" KeyUp="Car_KeyUp" IsEditable="True" />
+
+            <Label Content="Make" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbCar_Make" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="Model" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbCar_Model" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="Year" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbCar_Year" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+
+            <Label Content="Person Id" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbCar_PersonId" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="Company Id" Grid.Row="5" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbCar_CompanyId" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+
+            <Label Content="Is Manual Transmission" Grid.Row="6" Grid.Column="0" Margin="5,5,5,5"/>
+            <CheckBox Grid.Row="6" Grid.Column="1" x:Name="cbCar_IsManualTransmission" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsThreeState="False" />
+
+            <Button Grid.Row="7" Grid.Column="1" x:Name="btnCar_Save" Margin="5,5,5,5" Content="Save" Click="Car_Click" />
         </Grid>
         </Grid>
     </TabItem>

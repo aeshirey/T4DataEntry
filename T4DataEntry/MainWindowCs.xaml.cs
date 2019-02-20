@@ -552,7 +552,7 @@ namespace T4DataEntry
             Employee selected = (Employee)dgEmployee.SelectedItem;
             // read each Employee column from its individual controls
             Guid _EmployeeId = selected?.EmployeeId ?? Guid.NewGuid();
-            var _PersonId = (cbEmployee_PersonId.SelectedItem as Person).PersonId;
+            Guid _PersonId = selected?.PersonId ?? (cbEmployee_PersonId.SelectedItem as Person).PersonId;
             var _CompanyId = (cbEmployee_CompanyId.SelectedItem as Company).CompanyId;
             string _Title = cbEmployee_Title.Text;
             int? _OfficeNumber = int.TryParse(cbEmployee_OfficeNumber.Text, out i) ? i : (int?)null;
@@ -667,6 +667,7 @@ namespace T4DataEntry
     {
         [PrimaryKey]
         public Guid EmployeeId { get; set; }
+        [PrimaryKey]
         public Guid PersonId { get; set; }
         public Guid CompanyId { get; set; }
         public string Title { get; set; }
@@ -705,7 +706,7 @@ namespace T4DataEntry
 		{
             CreateTable<Car>();
             CreateTable<Company>();
-            CreateTable<Employee>();
+            Execute("create table if not exists \"Employee\" (\"EmployeeId\" varchar(36) not null, \"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"Title\" varchar not null, \"OfficeNumber\" integer, primary key (EmployeeId, PersonId)))");
             CreateTable<Person>();
             CreateTable<Tenure>();
 			Commit();

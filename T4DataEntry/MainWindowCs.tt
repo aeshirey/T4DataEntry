@@ -643,7 +643,14 @@ PopIndent();
 		PushIndent("            ");
 		foreach (var table in tables)
 		{
-			WriteLine($"CreateTable<{table.Name}>();");
+			if (table.IsCompositePK)
+			{
+				var stmt = table.CreateTableStatement()
+					.Replace("\"", "\\\"");
+				WriteLine($"Execute(\"{stmt})\");");
+			}
+			else
+				WriteLine($"CreateTable<{table.Name}>();");
 		}
 		PopIndent();
 		#>
