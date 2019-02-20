@@ -647,7 +647,7 @@ PopIndent();
 			{
 				var stmt = table.CreateTableStatement()
 					.Replace("\"", "\\\"");
-				WriteLine($"Execute(\"{stmt})\");");
+				WriteLine($"Execute(\"{stmt}\");");
 			}
 			else
 				WriteLine($"CreateTable<{table.Name}>();");
