@@ -1,6 +1,5 @@
 #order:3
-EmployeeId:Guid:PK
 PersonId:Guid:PK
-CompanyId:Guid
+CompanyId:Guid:PK
 Title:string
 OfficeNumber:int?

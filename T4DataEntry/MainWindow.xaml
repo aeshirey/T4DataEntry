@@ -131,25 +131,21 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Employee Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbEmployee_EmployeeId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
+            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbEmployee_PersonId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
 
-            <Label Content="Person Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbEmployee_PersonId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
+            <Label Content="Company Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbEmployee_CompanyId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
 
-            <Label Content="Company Id" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbEmployee_CompanyId" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="False" />
+            <Label Content="Title" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbEmployee_Title" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Title" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee_Title" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+            <Label Content="Office Number" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee_OfficeNumber" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Office Number" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbEmployee_OfficeNumber" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
-
-            <Button Grid.Row="5" Grid.Column="1" x:Name="btnEmployee_Save" Margin="5,5,5,5" Content="Save" Click="Employee_Click" />
+            <Button Grid.Row="4" Grid.Column="1" x:Name="btnEmployee_Save" Margin="5,5,5,5" Content="Save" Click="Employee_Click" />
         </Grid>
         </Grid>
     </TabItem>
@@ -163,7 +159,7 @@
         <Grid Grid.Row="0" Background="#FFE5E5E5">
             <DataGrid x:Name="dgTenure" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Tenure_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Employee Id" IsReadOnly="True" Binding="{Binding Employee}" Width="1*" />
+                    <DataGridTextColumn Header="Person Id" IsReadOnly="True" Binding="{Binding Person}" Width="1*" />
                     <DataGridTextColumn Header="Company Id" IsReadOnly="True" Binding="{Binding Company}" Width="1*" />
                     <DataGridTextColumn Header="Start Date" IsReadOnly="True" Binding="{Binding StartDate}" Width="1*" />
                     <DataGridTextColumn Header="End Date" IsReadOnly="True" Binding="{Binding EndDate}" Width="1*" />
@@ -183,8 +179,8 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Employee Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbTenure_EmployeeId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />
+            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbTenure_PersonId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />
 
             <Label Content="Company Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbTenure_CompanyId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />

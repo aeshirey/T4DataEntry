@@ -38,8 +38,8 @@ namespace T4DataEntry
             LoadCar();
 // Person: PersonId:Guid, Name:string, Age:int, Hometown:string, HeightCm:double
 // Company: CompanyId:Guid, Name:string, StockSymbol:string, Founded:DateTime
-// Employee: EmployeeId:Guid, PersonId:Guid, CompanyId:Guid, Title:string, OfficeNumber:int?
-// Tenure: EmployeeId:Guid, CompanyId:Guid, StartDate:DateTime, EndDate:DateTime?
+// Employee: PersonId:Guid, CompanyId:Guid, Title:string, OfficeNumber:int?
+// Tenure: PersonId:Guid, CompanyId:Guid, StartDate:DateTime, EndDate:DateTime?
 // Car: CarId:string, Make:string, Model:string, Year:int, PersonId:Guid?, CompanyId:Guid?, IsManualTransmission:bool
 
 			// input element validation
@@ -57,14 +57,13 @@ namespace T4DataEntry
             dtCompany_Founded.SelectedDateChanged += (sender, e) => { btnCompany_Save.IsEnabled = IsCompanyValid(); };
 
             // Employee:
-            cbEmployee_EmployeeId.SelectionChanged += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
             cbEmployee_PersonId.SelectionChanged += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
             cbEmployee_CompanyId.SelectionChanged += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
             cbEmployee_Title.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
             cbEmployee_OfficeNumber.KeyUp += (sender, e) => { btnEmployee_Save.IsEnabled = IsEmployeeValid(); };
 
             // Tenure:
-            cbTenure_EmployeeId.SelectionChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
+            cbTenure_PersonId.SelectionChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
             cbTenure_CompanyId.SelectionChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
             dtTenure_StartDate.SelectedDateChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
             dtTenure_EndDate.SelectedDateChanged += (sender, e) => { btnTenure_Save.IsEnabled = IsTenureValid(); };
@@ -90,6 +89,7 @@ namespace T4DataEntry
             // add all records back into the DataGrid
             records.ForEach(r => dgPerson.Items.Add(r));
             cbEmployee_PersonId.ItemsSource = records;
+            cbTenure_PersonId.ItemsSource = records;
             cbCar_PersonId.ItemsSource = (new Person[] { null }).Concat(records);
             cbPerson_Name.ItemsSource = records.Select(r => r.Name).ToList();
             cbPerson_Age.ItemsSource = records.Select(r => r.Age).ToList();
@@ -120,8 +120,6 @@ namespace T4DataEntry
 
             // add all records back into the DataGrid
             records.ForEach(r => dgEmployee.Items.Add(r));
-            cbTenure_EmployeeId.ItemsSource = records;
-            cbTenure_EmployeeId.ItemsSource = records;
             cbEmployee_Title.ItemsSource = records.Select(r => r.Title).ToList();
             cbEmployee_OfficeNumber.ItemsSource = records.Select(r => r.OfficeNumber).ToList();
             btnEmployee_Save.IsEnabled = false;
@@ -245,7 +243,7 @@ namespace T4DataEntry
 
         private bool IsTenureValid()
         {
-            if (cbTenure_EmployeeId.SelectedItem == null) return false;
+            if (cbTenure_PersonId.SelectedItem == null) return false;
             if (cbTenure_CompanyId.SelectedItem == null) return false;
             return true;
         }
@@ -363,7 +361,6 @@ namespace T4DataEntry
             // get the Employee object
             if (e.AddedItems.Count == 0)
             {
-                cbEmployee_EmployeeId.Text = string.Empty;
                 cbEmployee_PersonId.Text = string.Empty;
                 cbEmployee_CompanyId.Text = string.Empty;
                 cbEmployee_Title.Text = default(string);
@@ -372,14 +369,6 @@ namespace T4DataEntry
             else
             {
                 Employee employee = e.AddedItems[0] as Employee;
-                foreach (var item in cbEmployee_EmployeeId.Items)
-                {
-                   if ((item as Employee).EmployeeId == employee.EmployeeId)
-                   {
-                      cbEmployee_EmployeeId.SelectedItem = item;
-                      break;
-                   }
-                }
                 foreach (var item in cbEmployee_PersonId.Items)
                 {
                    if ((item as Person).PersonId == employee.PersonId)
@@ -405,7 +394,7 @@ namespace T4DataEntry
             // get the Tenure object
             if (e.AddedItems.Count == 0)
             {
-                cbTenure_EmployeeId.Text = string.Empty;
+                cbTenure_PersonId.Text = string.Empty;
                 cbTenure_CompanyId.Text = string.Empty;
                 dtTenure_StartDate.SelectedDate = DateTime.Today;
                 dtTenure_EndDate.SelectedDate = null;
@@ -413,11 +402,11 @@ namespace T4DataEntry
             else
             {
                 Tenure tenure = e.AddedItems[0] as Tenure;
-                foreach (var item in cbTenure_EmployeeId.Items)
+                foreach (var item in cbTenure_PersonId.Items)
                 {
-                   if ((item as Employee).EmployeeId == tenure.EmployeeId)
+                   if ((item as Person).PersonId == tenure.PersonId)
                    {
-                      cbTenure_EmployeeId.SelectedItem = item;
+                      cbTenure_PersonId.SelectedItem = item;
                       break;
                    }
                 }
@@ -546,15 +535,13 @@ namespace T4DataEntry
             int i;
             Employee selected = (Employee)dgEmployee.SelectedItem;
             // read each Employee column from its individual controls
-            Guid _EmployeeId = selected?.EmployeeId ?? Guid.NewGuid();
             Guid _PersonId = selected?.PersonId ?? (cbEmployee_PersonId.SelectedItem as Person).PersonId;
-            var _CompanyId = (cbEmployee_CompanyId.SelectedItem as Company).CompanyId;
+            Guid _CompanyId = selected?.CompanyId ?? (cbEmployee_CompanyId.SelectedItem as Company).CompanyId;
             string _Title = cbEmployee_Title.Text;
             int? _OfficeNumber = int.TryParse(cbEmployee_OfficeNumber.Text, out i) ? i : (int?)null;
 
             var record = new Employee
             {
-                EmployeeId = _EmployeeId,
                 PersonId = _PersonId,
                 CompanyId = _CompanyId,
                 Title = _Title,
@@ -565,7 +552,6 @@ namespace T4DataEntry
             LoadEmployee();
 
             // clear input elements
-            cbEmployee_EmployeeId.Text = string.Empty;
             cbEmployee_PersonId.Text = string.Empty;
             cbEmployee_CompanyId.Text = string.Empty;
             cbEmployee_Title.Text = default(string);
@@ -576,14 +562,14 @@ namespace T4DataEntry
         {
             Tenure selected = (Tenure)dgTenure.SelectedItem;
             // read each Tenure column from its individual controls
-            Guid _EmployeeId = selected?.EmployeeId ?? (cbTenure_EmployeeId.SelectedItem as Employee).EmployeeId;
+            Guid _PersonId = selected?.PersonId ?? (cbTenure_PersonId.SelectedItem as Person).PersonId;
             Guid _CompanyId = selected?.CompanyId ?? (cbTenure_CompanyId.SelectedItem as Company).CompanyId;
             DateTime _StartDate = dtTenure_StartDate.SelectedDate ?? DateTime.MinValue;
             DateTime? _EndDate = dtTenure_EndDate.SelectedDate;
 
             var record = new Tenure
             {
-                EmployeeId = _EmployeeId,
+                PersonId = _PersonId,
                 CompanyId = _CompanyId,
                 StartDate = _StartDate,
                 EndDate = _EndDate,
@@ -593,7 +579,7 @@ namespace T4DataEntry
             LoadTenure();
 
             // clear input elements
-            cbTenure_EmployeeId.Text = string.Empty;
+            cbTenure_PersonId.Text = string.Empty;
             cbTenure_CompanyId.Text = string.Empty;
             dtTenure_StartDate.SelectedDate = DateTime.Today;
             dtTenure_EndDate.SelectedDate = null;
@@ -665,28 +651,27 @@ namespace T4DataEntry
     public class Employee
     {
         [PrimaryKey]
-        public Guid EmployeeId { get; set; }
-        [PrimaryKey]
         public Guid PersonId { get; set; }
         public Person Person => MainWindow.UserDB.Table<Person>().First(rec => rec.PersonId == this.PersonId);
+        [PrimaryKey]
         public Guid CompanyId { get; set; }
         public Company Company => MainWindow.UserDB.Table<Company>().First(rec => rec.CompanyId == this.CompanyId);
         public string Title { get; set; }
         public int? OfficeNumber { get; set; }
-        public override string ToString() => EmployeeId.ToString();
+        public override string ToString() => PersonId.ToString();
     }
 
     public class Tenure
     {
         [PrimaryKey]
-        public Guid EmployeeId { get; set; }
-        public Employee Employee => MainWindow.UserDB.Table<Employee>().First(rec => rec.EmployeeId == this.EmployeeId);
+        public Guid PersonId { get; set; }
+        public Person Person => MainWindow.UserDB.Table<Person>().First(rec => rec.PersonId == this.PersonId);
         [PrimaryKey]
         public Guid CompanyId { get; set; }
         public Company Company => MainWindow.UserDB.Table<Company>().First(rec => rec.CompanyId == this.CompanyId);
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public override string ToString() => EmployeeId.ToString();
+        public override string ToString() => PersonId.ToString();
     }
 
     public class Car
@@ -712,14 +697,14 @@ namespace T4DataEntry
 	{
 		public const string DatabaseFile = @"data.sqlite";
 		public static SQLiteConnection DbConnection;
-		public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
-		{
-            CreateTable<Person>();
-            CreateTable<Company>();
-            Execute("create table if not exists \"Employee\" (\"EmployeeId\" varchar(36) not null, \"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"Title\" varchar not null, \"OfficeNumber\" integer, primary key (EmployeeId, PersonId))");
-            Execute("create table if not exists \"Tenure\" (\"EmployeeId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"StartDate\" datetime not null, \"EndDate\" datetime, primary key (EmployeeId, CompanyId))");
-            CreateTable<Car>();
-			Commit();
-		}
+    public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
+    {
+    CreateTable<Person>();
+    CreateTable<Company>();
+    Execute("create table if not exists \"Employee\" (\"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"Title\" varchar not null, \"OfficeNumber\" integer, primary key (PersonId, CompanyId))");
+    Execute("create table if not exists \"Tenure\" (\"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"StartDate\" datetime not null, \"EndDate\" datetime, primary key (PersonId, CompanyId))");
+    CreateTable<Car>();
+    Commit();
+    }
 	}
 }
