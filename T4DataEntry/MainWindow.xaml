@@ -113,6 +113,8 @@
         <Grid Grid.Row="0" Background="#FFE5E5E5">
             <DataGrid x:Name="dgEmployee" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Employee_SelectionChanged">
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header="Person Id" IsReadOnly="True" Binding="{Binding Person}" Width="1*" />
+                    <DataGridTextColumn Header="Company Id" IsReadOnly="True" Binding="{Binding Company}" Width="1*" />
                     <DataGridTextColumn Header="Title" IsReadOnly="True" Binding="{Binding Title}" Width="1*" />
                     <DataGridTextColumn Header="Office Number" IsReadOnly="True" Binding="{Binding OfficeNumber}" Width="1*" />
                 </DataGrid.Columns>
@@ -161,6 +163,8 @@
         <Grid Grid.Row="0" Background="#FFE5E5E5">
             <DataGrid x:Name="dgTenure" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Tenure_SelectionChanged">
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header="Employee Id" IsReadOnly="True" Binding="{Binding Employee}" Width="1*" />
+                    <DataGridTextColumn Header="Company Id" IsReadOnly="True" Binding="{Binding Company}" Width="1*" />
                     <DataGridTextColumn Header="Start Date" IsReadOnly="True" Binding="{Binding StartDate}" Width="1*" />
                     <DataGridTextColumn Header="End Date" IsReadOnly="True" Binding="{Binding EndDate}" Width="1*" />
                 </DataGrid.Columns>
@@ -208,6 +212,8 @@
                     <DataGridTextColumn Header="Make" IsReadOnly="True" Binding="{Binding Make}" Width="1*" />
                     <DataGridTextColumn Header="Model" IsReadOnly="True" Binding="{Binding Model}" Width="1*" />
                     <DataGridTextColumn Header="Year" IsReadOnly="True" Binding="{Binding Year}" Width="1*" />
+                    <DataGridTextColumn Header="Person Id" IsReadOnly="True" Binding="{Binding Person}" Width="1*" />
+                    <DataGridTextColumn Header="Company Id" IsReadOnly="True" Binding="{Binding Company}" Width="1*" />
                     <DataGridTextColumn Header="Is Manual Transmission" IsReadOnly="True" Binding="{Binding IsManualTransmission}" Width="1*" />
                 </DataGrid.Columns>
             </DataGrid>

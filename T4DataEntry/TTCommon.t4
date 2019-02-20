@@ -56,8 +56,10 @@ public List<Table> GetTables()
 					table.DataGridHeight = heights[0];
 					table.InputElementsHeight = heights[1];
 					break;
-				default:
-					throw new Exception("Unhandled table metadata tag: " + values[0]);
+				case "#tostring":
+					// can be 'simple', 'detailed'
+					table.ToStringMethod = values[1].ToLower();
+					break;
 			}
 		}
 	}
@@ -78,6 +80,9 @@ public class Table
 	public string Name;
 	public List<Column> Columns;
 
+	// can be "simple" or "detailed", but defaults to simple
+	public string ToStringMethod;
+
 	public string CleanName => T4DE.CleanName(this.Name);
 
 	public bool IsCompositePK => this.Columns.Count(c => c.IsPrimaryKey) > 1;
@@ -89,6 +94,7 @@ public class Table
 		this.Order = int.MaxValue;
 		this.DataGridHeight = 1;
 		this.InputElementsHeight = 1;
+		this.ToStringMethod = "simple";
 	}
 
 	public string CreateTableStatement()

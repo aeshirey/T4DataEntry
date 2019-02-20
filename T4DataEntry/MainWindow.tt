@@ -44,10 +44,15 @@
 			WriteLine("    <DataGrid.Columns>");
 			foreach (var column in table.Columns)
 			{
-				if (column.IsId)
+				if (column.IsId && column.Name == table.Name + "Id")
 					continue;
 
-				WriteLine($"        <DataGridTextColumn Header=\"{column.CleanName}\" IsReadOnly=\"True\" Binding=\"{{Binding {column.Name}}}\" Width=\"1*\" />");
+				if (column.IsId)
+				{
+					WriteLine($"        <DataGridTextColumn Header=\"{column.CleanName}\" IsReadOnly=\"True\" Binding=\"{{Binding {column.Name.Replace("Id", "")}}}\" Width=\"1*\" />");					
+				}
+				else
+					WriteLine($"        <DataGridTextColumn Header=\"{column.CleanName}\" IsReadOnly=\"True\" Binding=\"{{Binding {column.Name}}}\" Width=\"1*\" />");
 			}
 			WriteLine("    </DataGrid.Columns>");
 

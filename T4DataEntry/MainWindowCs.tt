@@ -30,7 +30,7 @@ namespace T4DataEntry
     /// </summary>
     public partial class MainWindow : Window
     {
-		public UserDB UserDB;
+		public static UserDB UserDB;
 
         public MainWindow()
         {
@@ -601,15 +601,31 @@ foreach (var table in tables)
 		}
 
 		WriteLine($"public {column.Type} {column.Name} {{ get; set; }}");
+
+		if (column.IsId && column.Name != table.Name + "Id")
+		{
+			var rel = column.Name.Replace("Id", "");
+			WriteLine($"public {rel} {rel} => MainWindow.UserDB.Table<{rel}>().First(rec => rec.{column.Name} == this.{column.Name});");
+		}
 	}
 
 	// friendly name to display?
 	if (table.Columns.Any(c => c.IsDisplayable))
 	{
-		var x = string.Join(", ", table.Columns
-			.Where(c => c.IsDisplayable)
-			.Select(c => $"{c.Name}={{{c.Name}}}"));
-		WriteLine($"public override string ToString() => $\"{table.Name}({x})\";");
+		if (table.ToStringMethod == "simple")
+		{
+			var x = string.Join(", ", table.Columns
+				.Where(c => c.IsDisplayable)
+				.Select(c => "{" + c.Name + "}"));
+			WriteLine($"public override string ToString() => $\"{x}\";");
+		}
+		else
+		{
+			var x = string.Join(", ", table.Columns
+				.Where(c => c.IsDisplayable)
+				.Select(c => $"{c.Name}={{{c.Name}}}"));
+			WriteLine($"public override string ToString() => $\"{table.Name}({x})\";");
+		}
 	}
 	else if (table.Columns.Any(c => c.Name == "Name"))
 	{
