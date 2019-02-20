@@ -1,4 +1,5 @@
-﻿CarId:string
+﻿#heights:2,4
+CarId:string
 *Make:string
 *Model:string
 Year:int

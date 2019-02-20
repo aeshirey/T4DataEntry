@@ -318,19 +318,32 @@ namespace T4DataEntry
             else
             {
                 Car car = e.AddedItems[0] as Car;
-                cbCar_CarId.Text = car.CarId;
+                foreach (var item in cbCar_CarId.Items)
+                {
+                   if ((item as Car).CarId == car.CarId)
+                   {
+                      cbCar_CarId.SelectedItem = item;
+                      break;
+                   }
+                }
                 cbCar_Make.Text = car.Make;
                 cbCar_Model.Text = car.Model;
                 cbCar_Year.Text = car.Year.ToString();
                 foreach (var item in cbCar_PersonId.Items)
                 {
                    if ((item as Person).PersonId == car.PersonId)
+                   {
                       cbCar_PersonId.SelectedItem = item;
+                      break;
+                   }
                 }
                 foreach (var item in cbCar_CompanyId.Items)
                 {
                    if ((item as Company).CompanyId == car.CompanyId)
+                   {
                       cbCar_CompanyId.SelectedItem = item;
+                      break;
+                   }
                 }
                 cbCar_IsManualTransmission.IsChecked = car.IsManualTransmission;
             }
@@ -348,7 +361,14 @@ namespace T4DataEntry
             else
             {
                 Company company = e.AddedItems[0] as Company;
-                cbCompany_CompanyId.Text = company.CompanyId.ToString();
+                foreach (var item in cbCompany_CompanyId.Items)
+                {
+                   if ((item as Company).CompanyId == company.CompanyId)
+                   {
+                      cbCompany_CompanyId.SelectedItem = item;
+                      break;
+                   }
+                }
                 cbCompany_Name.Text = company.Name;
                 cbCompany_StockSymbol.Text = company.StockSymbol;
                 dtCompany_Founded.SelectedDate = company.Founded;
@@ -368,16 +388,29 @@ namespace T4DataEntry
             else
             {
                 Employee employee = e.AddedItems[0] as Employee;
-                cbEmployee_EmployeeId.Text = employee.EmployeeId.ToString();
+                foreach (var item in cbEmployee_EmployeeId.Items)
+                {
+                   if ((item as Employee).EmployeeId == employee.EmployeeId)
+                   {
+                      cbEmployee_EmployeeId.SelectedItem = item;
+                      break;
+                   }
+                }
                 foreach (var item in cbEmployee_PersonId.Items)
                 {
                    if ((item as Person).PersonId == employee.PersonId)
+                   {
                       cbEmployee_PersonId.SelectedItem = item;
+                      break;
+                   }
                 }
                 foreach (var item in cbEmployee_CompanyId.Items)
                 {
                    if ((item as Company).CompanyId == employee.CompanyId)
+                   {
                       cbEmployee_CompanyId.SelectedItem = item;
+                      break;
+                   }
                 }
                 cbEmployee_Title.Text = employee.Title;
                 cbEmployee_OfficeNumber.Text = employee.OfficeNumber.ToString();
@@ -397,7 +430,14 @@ namespace T4DataEntry
             else
             {
                 Person person = e.AddedItems[0] as Person;
-                cbPerson_PersonId.Text = person.PersonId.ToString();
+                foreach (var item in cbPerson_PersonId.Items)
+                {
+                   if ((item as Person).PersonId == person.PersonId)
+                   {
+                      cbPerson_PersonId.SelectedItem = item;
+                      break;
+                   }
+                }
                 cbPerson_Name.Text = person.Name;
                 cbPerson_Age.Text = person.Age.ToString();
                 cbPerson_Hometown.Text = person.Hometown;
@@ -420,12 +460,18 @@ namespace T4DataEntry
                 foreach (var item in cbTenure_PersonId.Items)
                 {
                    if ((item as Person).PersonId == tenure.PersonId)
+                   {
                       cbTenure_PersonId.SelectedItem = item;
+                      break;
+                   }
                 }
                 foreach (var item in cbTenure_CompanyId.Items)
                 {
                    if ((item as Company).CompanyId == tenure.CompanyId)
+                   {
                       cbTenure_CompanyId.SelectedItem = item;
+                      break;
+                   }
                 }
                 dtTenure_StartDate.SelectedDate = tenure.StartDate;
                 dtTenure_EndDate.SelectedDate = tenure.EndDate;

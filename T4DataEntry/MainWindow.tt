@@ -26,28 +26,28 @@
 		foreach (var table in tables)
 		{
 
-		    WriteLine($"<TabItem x:Name=\"tab{table.Key}\" Header=\"{table.Key}\" HorizontalAlignment=\"Left\" Height=\"20\" Margin=\"0\" VerticalAlignment=\"Top\">");
+		    WriteLine($"<TabItem x:Name=\"tab{table.Name}\" Header=\"{table.CleanName}\" HorizontalAlignment=\"Left\" Height=\"20\" Margin=\"0\" VerticalAlignment=\"Top\">");
 			PushIndent("    ");
 
 			// grid that horizontally splits the listbox and the data entry
 			WriteLine("<Grid Grid.Row=\"0\" Background=\"#FFE5E5E5\">");
 			PushIndent("    ");
 			WriteLine($"<Grid.RowDefinitions>");
-            WriteLine($"    <RowDefinition />");
-            WriteLine($"    <RowDefinition />");
+            WriteLine($"    <RowDefinition Height=\"{table.DataGridHeight}*\" />");
+            WriteLine($"    <RowDefinition Height=\"{table.InputElementsHeight}*\" />");
             WriteLine($"</Grid.RowDefinitions>");
 
 
-            WriteLine("<Grid Grid.Row=\"0\" Background=\"#FFE5E5E5\">");
+            WriteLine($"<Grid Grid.Row=\"0\" Background=\"#FFE5E5E5\">");
 			PushIndent("    ");
-			WriteLine($"<DataGrid x:Name=\"dg{table.Key}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"DataGrid_KeyUp\" MouseLeftButtonDown=\"DataGrid_MouseLeftButtonDown\" SelectionChanged=\"{table.Key}_SelectionChanged\">");
+			WriteLine($"<DataGrid x:Name=\"dg{table.Name}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"DataGrid_KeyUp\" MouseLeftButtonDown=\"DataGrid_MouseLeftButtonDown\" SelectionChanged=\"{table.Name}_SelectionChanged\">");
 			WriteLine("    <DataGrid.Columns>");
-			foreach (var column in table.Value)
+			foreach (var column in table.Columns)
 			{
 				if (column.IsId)
 					continue;
 
-				WriteLine($"        <DataGridTextColumn Header=\"{column.Name}\" IsReadOnly=\"True\" Binding=\"{{Binding {column.Name}}}\" Width=\"1*\" />");
+				WriteLine($"        <DataGridTextColumn Header=\"{column.CleanName}\" IsReadOnly=\"True\" Binding=\"{{Binding {column.Name}}}\" Width=\"1*\" />");
 			}
 			WriteLine("    </DataGrid.Columns>");
 
@@ -58,7 +58,7 @@
 			// </list of records>
 
 
-            WriteLine("<Grid Grid.Row=\"1\" Background=\"#FFE5E5E5\">");
+            WriteLine($"<Grid Grid.Row=\"1\" Background=\"#FFE5E5E5\">");
 			PushIndent("    ");
 			WriteLine($"<Grid.ColumnDefinitions>");
             WriteLine($"    <ColumnDefinition Width=\"1*\"/>");
@@ -66,7 +66,7 @@
             WriteLine($"</Grid.ColumnDefinitions>");
             
 			WriteLine($"<Grid.RowDefinitions>");
-			foreach (var column in table.Value)
+			foreach (var column in table.Columns)
 			{
 				WriteLine($"    <RowDefinition Height=\"1*\"/>");
 			}
@@ -78,13 +78,13 @@
 
 			var row = 0;
 			// Create the data entry elements for each column
-			foreach (var column in table.Value)
+			foreach (var column in table.Columns)
 			{
-				WriteLine($"    <Label Content=\"{column.Name}\" Grid.Row=\"{row}\" Grid.Column=\"0\" Margin=\"{Margin},{Margin},{Margin},{Margin}\"/>");
+				WriteLine($"    <Label Content=\"{column.CleanName}\" Grid.Row=\"{row}\" Grid.Column=\"0\" Margin=\"{Margin},{Margin},{Margin},{Margin}\"/>");
 
 				if (column.IsPrimaryKey)
 				{
-					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"{table.Key}_KeyUp\" IsEditable=\"{column.Type == "string"}\" />");
+					WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" KeyUp=\"{table.Name}_KeyUp\" IsEditable=\"{column.Type == "string"}\" />");
 				}
 				else
 				{
@@ -92,14 +92,14 @@
 					{
 						case "DateTime":
 						case "DateTime?":
-							WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Key}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
+							WriteLine($"    <DatePicker Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Name}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" />");
 							break;
 						case "bool":
 						case "bool?":
-							WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Key}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsThreeState=\"{column.Type == "bool?"}\" />");
+							WriteLine($"    <CheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Name}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsThreeState=\"{column.Type == "bool?"}\" />");
 							break;
 						default:
-							WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Key}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
+							WriteLine($"    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"{column.UIElementName}\" KeyUp=\"{table.Name}_KeyUp\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" IsEditable=\"{!column.IsId}\" />");
 							break;
 					}
 				}
@@ -107,7 +107,7 @@
 				row++;
 			}
 
-			WriteLine($"    <Button Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"btn{table.Key}_Save\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" Content=\"Save\" Click=\"{table.Key}_Click\" />");
+			WriteLine($"    <Button Grid.Row=\"{row}\" Grid.Column=\"1\" x:Name=\"btn{table.Name}_Save\" Margin=\"{Margin},{Margin},{Margin},{Margin}\" Content=\"Save\" Click=\"{table.Name}_Click\" />");
 				
 
 				

@@ -44,15 +44,15 @@ namespace T4DataEntry
 			PushIndent("            ");
 			foreach(var table in tables)
 			{
-				WriteLine($"Load{table.Key}();");
+				WriteLine($"Load{table.Name}();");
 			}
 			PopIndent();
 
 
 			foreach (var table in tables)
 			{
-				var cols = string.Join(", ", table.Value.Select(c => $"{c.Name}:{c.Type}"));
-				WriteLine($"// {table.Key}: {cols}");
+				var cols = string.Join(", ", table.Columns.Select(c => $"{c.Name}:{c.Type}"));
+				WriteLine($"// {table.Name}: {cols}");
 			}
 
 
@@ -63,30 +63,30 @@ namespace T4DataEntry
 			PushIndent("            ");
 			foreach (var table in tables)
 			{
-				WriteLine($"// {table.Key}:");
-				foreach (var column in table.Value)
+				WriteLine($"// {table.Name}:");
+				foreach (var column in table.Columns)
 				{
-					var btn = $"btn{table.Key}_Save";
+					var btn = $"btn{table.Name}_Save";
 					switch (column.Type)
 					{
 						case "int":
 						case "int?":
 						case "double":
 						case "double?":
-							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
+							WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Name}Valid(); }};");
 							break;
 						case "Guid":
 						case "Guid?":
-							WriteLine($"{column.UIElementName}.SelectionChanged += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
+							WriteLine($"{column.UIElementName}.SelectionChanged += (sender, e) => {{ {btn}.IsEnabled = Is{table.Name}Valid(); }};");
 							break;
 						case "DateTime":
 						case "DateTime?":
-							WriteLine($"{column.UIElementName}.SelectedDateChanged += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
+							WriteLine($"{column.UIElementName}.SelectedDateChanged += (sender, e) => {{ {btn}.IsEnabled = Is{table.Name}Valid(); }};");
 							break;
 						case "string":
 							//if (!column.CanBeEmptyString)
 							{
-								WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Key}Valid(); }};");
+								WriteLine($"{column.UIElementName}.KeyUp += (sender, e) => {{ {btn}.IsEnabled = Is{table.Name}Valid(); }};");
 							}
 							break;
 					}
@@ -107,36 +107,36 @@ namespace T4DataEntry
 	PushIndent("    ");
 	foreach (var table in tables)
 	{
-		WriteLine($"private void Load{table.Key}()");
+		WriteLine($"private void Load{table.Name}()");
 		WriteLine("{");
 		PushIndent("    ");
 		
-		WriteLine($"// remove all {table.Key} entries from its DataGrid and pull the new set from the database");
-		WriteLine($"dg{table.Key}.Items.Clear();");
-		WriteLine($"var records = UserDB.Table<{table.Key}>().ToList();");
+		WriteLine($"// remove all {table.Name} entries from its DataGrid and pull the new set from the database");
+		WriteLine($"dg{table.Name}.Items.Clear();");
+		WriteLine($"var records = UserDB.Table<{table.Name}>().ToList();");
 		WriteLine("");
 
 		WriteLine("// add all records back into the DataGrid");
-		WriteLine($"records.ForEach(r => dg{table.Key}.Items.Add(r));");
+		WriteLine($"records.ForEach(r => dg{table.Name}.Items.Add(r));");
 
 
-		foreach (var column in table.Value)
+		foreach (var column in table.Columns)
 		{
 			if (column.IsPrimaryKey)
 			{
-			//WriteLine("// is id:");
 				// any other tables that reference this id will have a ComboBox that needs to be updated
 				foreach(var otherTable in tables)
 				{
-					if (otherTable.Key == table.Key) continue;
+					// the other table can't be this one.
+					if (otherTable.Name == table.Name) continue;
 
-					foreach (var otherColumn in otherTable.Value)
+					foreach (var otherColumn in otherTable.Columns)
 					{
-						if (otherColumn.Name == column.Name)
+						if (otherColumn.Name == table.Name + "Id")// column.Name)
 						{
 							// update the referenced table
 							if (otherColumn.Type == "Guid?")
-								WriteLine($"{otherColumn.UIElementName}.ItemsSource = (new {table.Key}[] {{ null }}).Concat(records);");
+								WriteLine($"{otherColumn.UIElementName}.ItemsSource = (new {table.Name}[] {{ null }}).Concat(records);");
 							else
 								WriteLine($"{otherColumn.UIElementName}.ItemsSource = records;");
 						}
@@ -164,7 +164,7 @@ namespace T4DataEntry
 			}
 		}
 
-		WriteLine($"btn{table.Key}_Save.IsEnabled = false;");
+		WriteLine($"btn{table.Name}_Save.IsEnabled = false;");
 		
 		PopIndent();
 		WriteLine("}");
@@ -222,10 +222,10 @@ private void DataGrid_KeyUp(object sender, KeyEventArgs e)
 		else
 			Write("else ");
 
-		WriteLine($"if (item is {table.Key})");
+		WriteLine($"if (item is {table.Name})");
 		WriteLine("{");
-		WriteLine($"    UserDB.Delete(({table.Key})item);");
-		WriteLine($"    Load{table.Key}();");
+		WriteLine($"    UserDB.Delete(({table.Name})item);");
+		WriteLine($"    Load{table.Name}();");
 		WriteLine("}");
 	}
 	PopIndent();
@@ -236,16 +236,16 @@ private void DataGrid_KeyUp(object sender, KeyEventArgs e)
 <#
 	foreach (var table in tables)
 	{
-		WriteLine($"private bool Is{table.Key}Valid()");
+		WriteLine($"private bool Is{table.Name}Valid()");
 		WriteLine("{");
 		PushIndent("    ");
 		
-		if (table.Value.Any(c => !c.IsPrimaryKey && c.BaseType == "int")) WriteLine("int i;");
-		if (table.Value.Any(c => !c.IsPrimaryKey && c.BaseType == "double")) WriteLine("double d;");
+		if (table.Columns.Any(c => !c.IsPrimaryKey && c.BaseType == "int")) WriteLine("int i;");
+		if (table.Columns.Any(c => !c.IsPrimaryKey && c.BaseType == "double")) WriteLine("double d;");
 
-		foreach (var column in table.Value)
+		foreach (var column in table.Columns)
 		{
-			if (column.IsPrimaryKey) continue;
+			if (column.IsPrimaryKey && column.Name == table.Name + "Id") continue;
 			var t = (column.IsNullable ? "Nullable" : string.Empty) + column.Type;
 			switch (column.BaseType)
 			{
@@ -290,7 +290,7 @@ private void DataGrid_KeyUp(object sender, KeyEventArgs e)
 	WriteLine("#region Handle 'Enter' key for saving records");
 	foreach (var table in tables)
 	{
-		WriteLine($"private void {table.Key}_KeyUp(object sender, KeyEventArgs e)");
+		WriteLine($"private void {table.Name}_KeyUp(object sender, KeyEventArgs e)");
 		WriteLine("{");
 		PushIndent("    ");
 
@@ -298,8 +298,8 @@ private void DataGrid_KeyUp(object sender, KeyEventArgs e)
 		WriteLine("    return;");
 		WriteLine("");
 
-		WriteLine($"if (btn{table.Key}_Save.IsEnabled && Is{table.Key}Valid())");
-		WriteLine($"    {table.Key}_Click(btn{table.Key}_Save, null);");
+		WriteLine($"if (btn{table.Name}_Save.IsEnabled && Is{table.Name}Valid())");
+		WriteLine($"    {table.Name}_Click(btn{table.Name}_Save, null);");
 
 		PopIndent();
 		WriteLine("}");
@@ -312,15 +312,15 @@ private void DataGrid_KeyUp(object sender, KeyEventArgs e)
 <#
 foreach (var table in tables)
 {
-	WriteLine($"private void {table.Key}_SelectionChanged(object sender, SelectionChangedEventArgs e)");
+	WriteLine($"private void {table.Name}_SelectionChanged(object sender, SelectionChangedEventArgs e)");
 	WriteLine("{");
 	PushIndent("    ");
 
-	WriteLine($"// get the {table.Key} object");
+	WriteLine($"// get the {table.Name} object");
 	WriteLine($"if (e.AddedItems.Count == 0)");
 	WriteLine("{");
 	PushIndent("    ");
-	foreach(var column in table.Value)
+	foreach(var column in table.Columns)
 	{
 		switch(column.Type)
 		{
@@ -355,21 +355,24 @@ foreach (var table in tables)
 	WriteLine("{");
 
 	PushIndent("    ");
-	string instance = table.Key.ToLower();
-	WriteLine($"{table.Key} {instance} = e.AddedItems[0] as {table.Key};");
-	foreach(var column in table.Value)
+	string instance = table.Name.ToLower();
+	WriteLine($"{table.Name} {instance} = e.AddedItems[0] as {table.Name};");
+	foreach(var column in table.Columns)
 	{
-		if (column.IsPrimaryKey)
+		/*if (column.IsPrimaryKey)
 		{
 			Write($"{column.UIElementName}.Text = {instance}.{column.Name}");
 			WriteLine(column.Type == "string" ? ";" : ".ToString();");
 		}
-		else if (column.IsId)
+		else */ if (column.IsId)
 		{
 			WriteLine($"foreach (var item in {column.UIElementName}.Items)");
 			WriteLine("{");
 			WriteLine($"   if ((item as {column.Name.Replace("Id", "")}).{column.Name} == {instance}.{column.Name})");
+			WriteLine("   {");
 			WriteLine($"      {column.UIElementName}.SelectedItem = item;");
+			WriteLine("      break;");
+			WriteLine("   }");
 			//WriteLine($"   if (item == {column.UIElementName}.SelectedItem) continue;");
 			WriteLine("}");
 		}
@@ -378,25 +381,25 @@ foreach (var table in tables)
 			switch(column.Type)
 			{
 				case "string":
-					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name};");
+					WriteLine($"{column.UIElementName}.Text = {table.Name.ToLower()}.{column.Name};");
 					break;
 				case "int":
 				case "int?":
 				case "double":
 				case "double?":
-					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+					WriteLine($"{column.UIElementName}.Text = {table.Name.ToLower()}.{column.Name}.ToString();");
 					break;
 				case "Guid":
 				case "Guid?":
-					WriteLine($"{column.UIElementName}.Text = {table.Key.ToLower()}.{column.Name}.ToString();");
+					WriteLine($"{column.UIElementName}.Text = {table.Name.ToLower()}.{column.Name}.ToString();");
 					break;
 				case "DateTime":
 				case "DateTime?":
-					WriteLine($"{column.UIElementName}.SelectedDate = {table.Key.ToLower()}.{column.Name};");
+					WriteLine($"{column.UIElementName}.SelectedDate = {table.Name.ToLower()}.{column.Name};");
 					break;
 				case "bool":
 				case "bool?":
-					WriteLine($"{column.UIElementName}.IsChecked = {table.Key.ToLower()}.{column.Name};");
+					WriteLine($"{column.UIElementName}.IsChecked = {table.Name.ToLower()}.{column.Name};");
 					break;
 				default:
 					throw new Exception("Unhandled type in SelectionChanged (value): " + column.Type);
@@ -418,8 +421,8 @@ foreach (var table in tables)
 <#
 	foreach (var table in tables)
 	{
-		var tableName = table.Key;
-		var columns = table.Value;
+		var tableName = table.Name;
+		var columns = table.Columns;
 
 		WriteLine($"private void {tableName}_Click(object sender, RoutedEventArgs e)");
 		WriteLine("{");
@@ -432,7 +435,7 @@ foreach (var table in tables)
 		if (columns.Any(c => c.Type == "Guid?" && !c.IsPrimaryKey))
 			WriteLine("Guid g;");
 
-		WriteLine($"{table.Key} selected = ({table.Key})dg{table.Key}.SelectedItem;");
+		WriteLine($"{table.Name} selected = ({table.Name})dg{table.Name}.SelectedItem;");
 		WriteLine($"// read each {tableName} column from its individual controls");
 		foreach (var column in columns)
 		{
@@ -451,8 +454,18 @@ foreach (var table in tables)
 						break;
 					case "Guid":
 					case "Guid?":
-						// generate a guid
-						WriteLine("Guid.NewGuid();");
+						// if this guid is the PK for the current table (eg, Person.PersonId), generate an id
+						if (column.Name == table.Name + "Id")
+						{
+							// generate a guid
+							WriteLine("Guid.NewGuid();");
+						}
+						else
+						{
+							// refers to another table. there has to be a dropdown for it
+							var otherTable = column.Name.Replace("Id", "");
+							WriteLine($"({column.UIElementName}.SelectedItem as {otherTable}).{column.Name};");
+						}
 						break;
 					case "int":
 						WriteLine("int.Parse({column.UIElementName}.Text);");
@@ -528,11 +541,11 @@ foreach (var table in tables)
 		WriteLine("};");
 		WriteLine("");
 		WriteLine("UserDB.InsertOrReplace(record);");
-		WriteLine($"Load{table.Key}();");
+		WriteLine($"Load{table.Name}();");
 		WriteLine("");
 		WriteLine("// clear input elements");
 
-		foreach (var column in table.Value)
+		foreach (var column in table.Columns)
 		{
 			switch(column.Type)
 			{
@@ -576,11 +589,11 @@ foreach (var table in tables)
 <#
 foreach (var table in tables)
 {
-	WriteLine($"public class {table.Key}");
+	WriteLine($"public class {table.Name}");
 	WriteLine("{");
 		
 	PushIndent("    ");
-	foreach (var column in table.Value)
+	foreach (var column in table.Columns)
 	{
 		if (column.IsPrimaryKey)
 		{
@@ -591,20 +604,20 @@ foreach (var table in tables)
 	}
 
 	// friendly name to display?
-	if (table.Value.Any(c => c.IsDisplayable))
+	if (table.Columns.Any(c => c.IsDisplayable))
 	{
-		var x = string.Join(", ", table.Value
+		var x = string.Join(", ", table.Columns
 			.Where(c => c.IsDisplayable)
 			.Select(c => $"{c.Name}={{{c.Name}}}"));
-		WriteLine($"public override string ToString() => $\"{table.Key}({x})\";");
+		WriteLine($"public override string ToString() => $\"{table.Name}({x})\";");
 	}
-	else if (table.Value.Any(c => c.Name == "Name"))
+	else if (table.Columns.Any(c => c.Name == "Name"))
 	{
 		WriteLine("public override string ToString() => Name;");
 	}
-	else if (table.Value.Any(c => c.IsPrimaryKey))
+	else if (table.Columns.Any(c => c.IsPrimaryKey))
 	{
-		var pk = table.Value.First(c => c.IsPrimaryKey);
+		var pk = table.Columns.First(c => c.IsPrimaryKey);
 		var pkName = pk.Type == "string" ? pk.Name : pk.Name + ".ToString()";
 		WriteLine($"public override string ToString() => {pkName};");
 	}
@@ -630,7 +643,7 @@ PopIndent();
 		PushIndent("            ");
 		foreach (var table in tables)
 		{
-			WriteLine($"CreateTable<{table.Key}>();");
+			WriteLine($"CreateTable<{table.Name}>();");
 		}
 		PopIndent();
 		#>

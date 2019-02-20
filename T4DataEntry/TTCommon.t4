@@ -6,34 +6,89 @@
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#+
-public Dictionary<string, List<Column>> GetTables()
+public List<Table> GetTables()
 {
-	var tables = new Dictionary<string, List<Column>>();
+	var tables = new List<Table>();
 		
 	var files = Directory.GetFiles(Host.ResolvePath("DOM"));
+	
 	foreach (var file in files)
 	{
 		var fileInfo = new FileInfo(file);
 		var tableName = fileInfo.Name.Replace(".txt", string.Empty);
-		tables[tableName] = new List<Column>();
 
-		var columns = File.ReadLines(file)
-			.Select(line => line.Split(':'));
+		var table = new Table(tableName);
 
+		List<string> metas = new List<string>(),
+			columns = new List<string>();
+
+		foreach (var line in File.ReadLines(file))
+		{
+			if (string.IsNullOrEmpty(line))
+				continue;
+			if (line.StartsWith("#"))
+				metas.Add(line);
+			else
+				columns.Add(line);
+		}
+		
 		foreach (var c in columns)
 		{
-			tables[tableName].Add(new Column(tableName, c));
+			table.Columns.Add(new Column(tableName, c.Split(':')));
 		}
 
-		if (tables[tableName].Count == 0)
+		if (table.Columns.Count > 0)
 		{
-			tables.Remove(tableName);
+			tables.Add(table);
+		}
+
+		foreach (var meta in metas)
+		{
+			var values = meta.Split(':');
+
+			switch (values[0].ToLower())
+			{
+				case "#order":
+					table.Order = int.Parse(values[1]);
+					break;
+				case "#heights":
+					var heights = values[1].Split(',').Select(int.Parse).ToArray();
+					table.DataGridHeight = heights[0];
+					table.InputElementsHeight = heights[1];
+					break;
+				default:
+					throw new Exception("Unhandled table metadata tag: " + values[0]);
+			}
 		}
 	}
+
+	tables = tables
+		.OrderBy(t => t.Order)
+		.ToList();
 
 	return tables;
 }
 
+
+
+public class Table
+{
+	public int Order;
+	public int DataGridHeight, InputElementsHeight;
+	public string Name;
+	public List<Column> Columns;
+
+	public string CleanName { get { return T4DE.CleanName(this.Name); } }
+
+	public Table(string name)
+	{
+		this.Name = name;
+		this.Columns = new List<Column>();
+		this.Order = int.MaxValue;
+		this.DataGridHeight = 1;
+		this.InputElementsHeight = 1;
+	}
+}
 
 public class Column
 {
@@ -54,12 +109,19 @@ public class Column
 	
 	public bool IsId {get => Name.EndsWith("Id"); }
 
+	
+	public string CleanName { get { return T4DE.CleanName(this.Name); } }
+
 	public Column(string table, string[] configValues)
 	{
 		string name = configValues[0],
 			type = configValues[1];
 
 		this.Name = name.Replace("*", string.Empty);
+
+		string[] extras = configValues.Length >= 3
+			? configValues[2].Split(',').ToArray()
+			: new string[0];
 
 		this.IsNullable = type.EndsWith("?");
 
@@ -80,7 +142,8 @@ public class Column
 				break;
 		}
 
-		this.IsPrimaryKey  = this.Name == table + "Id";
+		this.IsPrimaryKey  = this.Name == table + "Id"
+			|| extras.Any(e => e == "PK");
 		this.IsDisplayable = name.StartsWith("*");
 
 		switch (this.Type)
@@ -108,6 +171,23 @@ public class Column
 			default:
 				throw new Exception($"Unhandled type for {table} UIElementName: '{this.Type}'");
 		}
+	}
+}
+
+public static class T4DE
+{
+	public static string CleanName(string input)
+	{
+		var sb = new StringBuilder();
+
+		for (int i = 0; i < input.Length; i++)
+		{
+			if (i > 0 && char.IsUpper(input[i]))
+				sb.Append(' ');
+			sb.Append(input[i]);
+		}
+
+		return sb.ToString();
 	}
 }
 #>
