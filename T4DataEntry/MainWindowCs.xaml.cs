@@ -495,12 +495,15 @@ namespace T4DataEntry
             UserDB.InsertOrReplace(record);
             LoadPerson();
 
-            // clear input elements
-            cbPerson_PersonId.Text = string.Empty;
-            cbPerson_Name.Text = default(string);
-            cbPerson_Age.Text = string.Empty;
-            cbPerson_Hometown.Text = default(string);
-            cbPerson_HeightCm.Text = string.Empty;
+            if (!miRetainValues.IsChecked)
+            {
+                // clear input elements
+                cbPerson_PersonId.Text = string.Empty;
+                cbPerson_Name.Text = default(string);
+                cbPerson_Age.Text = string.Empty;
+                cbPerson_Hometown.Text = default(string);
+                cbPerson_HeightCm.Text = string.Empty;
+            }
         }
 
         private void Company_Click(object sender, RoutedEventArgs e)
@@ -523,11 +526,14 @@ namespace T4DataEntry
             UserDB.InsertOrReplace(record);
             LoadCompany();
 
-            // clear input elements
-            cbCompany_CompanyId.Text = string.Empty;
-            cbCompany_Name.Text = default(string);
-            cbCompany_StockSymbol.Text = default(string);
-            dtCompany_Founded.SelectedDate = DateTime.Today;
+            if (!miRetainValues.IsChecked)
+            {
+                // clear input elements
+                cbCompany_CompanyId.Text = string.Empty;
+                cbCompany_Name.Text = default(string);
+                cbCompany_StockSymbol.Text = default(string);
+                dtCompany_Founded.SelectedDate = DateTime.Today;
+            }
         }
 
         private void Employee_Click(object sender, RoutedEventArgs e)
@@ -551,11 +557,14 @@ namespace T4DataEntry
             UserDB.InsertOrReplace(record);
             LoadEmployee();
 
-            // clear input elements
-            cbEmployee_PersonId.Text = string.Empty;
-            cbEmployee_CompanyId.Text = string.Empty;
-            cbEmployee_Title.Text = default(string);
-            cbEmployee_OfficeNumber.Text = string.Empty;
+            if (!miRetainValues.IsChecked)
+            {
+                // clear input elements
+                cbEmployee_PersonId.Text = string.Empty;
+                cbEmployee_CompanyId.Text = string.Empty;
+                cbEmployee_Title.Text = default(string);
+                cbEmployee_OfficeNumber.Text = string.Empty;
+            }
         }
 
         private void Tenure_Click(object sender, RoutedEventArgs e)
@@ -578,11 +587,14 @@ namespace T4DataEntry
             UserDB.InsertOrReplace(record);
             LoadTenure();
 
-            // clear input elements
-            cbTenure_PersonId.Text = string.Empty;
-            cbTenure_CompanyId.Text = string.Empty;
-            dtTenure_StartDate.SelectedDate = DateTime.Today;
-            dtTenure_EndDate.SelectedDate = null;
+            if (!miRetainValues.IsChecked)
+            {
+                // clear input elements
+                cbTenure_PersonId.Text = string.Empty;
+                cbTenure_CompanyId.Text = string.Empty;
+                dtTenure_StartDate.SelectedDate = DateTime.Today;
+                dtTenure_EndDate.SelectedDate = null;
+            }
         }
 
         private void Car_Click(object sender, RoutedEventArgs e)
@@ -612,14 +624,17 @@ namespace T4DataEntry
             UserDB.InsertOrReplace(record);
             LoadCar();
 
-            // clear input elements
-            cbCar_CarId.Text = default(string);
-            cbCar_Make.Text = default(string);
-            cbCar_Model.Text = default(string);
-            cbCar_Year.Text = string.Empty;
-            cbCar_PersonId.Text = string.Empty;
-            cbCar_CompanyId.Text = string.Empty;
-            cbCar_IsManualTransmission.IsChecked = default(bool);
+            if (!miRetainValues.IsChecked)
+            {
+                // clear input elements
+                cbCar_CarId.Text = default(string);
+                cbCar_Make.Text = default(string);
+                cbCar_Model.Text = default(string);
+                cbCar_Year.Text = string.Empty;
+                cbCar_PersonId.Text = string.Empty;
+                cbCar_CompanyId.Text = string.Empty;
+                cbCar_IsManualTransmission.IsChecked = default(bool);
+            }
         }
 
     	#endregion
@@ -697,14 +712,14 @@ namespace T4DataEntry
 	{
 		public const string DatabaseFile = @"data.sqlite";
 		public static SQLiteConnection DbConnection;
-    public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
-    {
-    CreateTable<Person>();
-    CreateTable<Company>();
-    Execute("create table if not exists \"Employee\" (\"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"Title\" varchar not null, \"OfficeNumber\" integer, primary key (PersonId, CompanyId))");
-    Execute("create table if not exists \"Tenure\" (\"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"StartDate\" datetime not null, \"EndDate\" datetime, primary key (PersonId, CompanyId))");
-    CreateTable<Car>();
-    Commit();
-    }
+		public UserDB(string databaseFile = DatabaseFile) : base(databaseFile)
+		{
+            CreateTable<Person>();
+            CreateTable<Company>();
+            Execute("create table if not exists \"Employee\" (\"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"Title\" varchar not null, \"OfficeNumber\" integer, primary key (PersonId, CompanyId))");
+            Execute("create table if not exists \"Tenure\" (\"PersonId\" varchar(36) not null, \"CompanyId\" varchar(36) not null, \"StartDate\" datetime not null, \"EndDate\" datetime, primary key (PersonId, CompanyId))");
+            CreateTable<Car>();
+			Commit();
+		}
 	}
 }

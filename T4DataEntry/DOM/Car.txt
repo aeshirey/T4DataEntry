@@ -1,9 +1,9 @@
 ﻿#order:5
 #heights:2,4
 CarId:string
-*Make:string
-*Model:string
-Year:int
-PersonId:Guid?
-CompanyId:Guid?
-IsManualTransmission:bool
+*&Make:string
+*M&odel:string
+&Year:int
+&PersonId:Guid?
+&CompanyId:Guid?
+IsManual&Transmission:bool

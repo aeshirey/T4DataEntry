@@ -131,6 +131,7 @@ public class Column
 	public readonly bool CanBeEmptyString;
 	
 	public readonly string UIElementName;
+	public readonly string UIShortCutName;
 	public readonly string UIElementType;
 	
 	public bool IsId {get => Name.EndsWith("Id"); }
@@ -143,7 +144,9 @@ public class Column
 		string name = configValues[0],
 			type = configValues[1];
 
-		this.Name = name.Replace("*", string.Empty);
+		this.Name = name
+			.Replace("*", string.Empty) // for IsDisplayable
+			.Replace("&", string.Empty); // for keyboard shortcuts
 
 		string[] extras = configValues.Length >= 3
 			? configValues[2].Split(',').ToArray()
@@ -171,6 +174,11 @@ public class Column
 		this.IsPrimaryKey  = this.Name == table + "Id"
 			|| extras.Any(e => e == "PK");
 		this.IsDisplayable = name.StartsWith("*");
+		
+		this.UIShortCutName = name
+			.Replace("*", string.Empty)
+			.Replace("_", "__")
+			.Replace("&", "_");
 
 		switch (this.Type)
 		{
@@ -243,6 +251,8 @@ public static class T4DE
 
 		for (int i = 0; i < input.Length; i++)
 		{
+		    if (input[i] == '&') continue;
+
 			if (i > 0 && char.IsUpper(input[i]))
 				sb.Append(' ');
 			sb.Append(input[i]);

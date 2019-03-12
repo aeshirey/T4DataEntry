@@ -15,9 +15,21 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-	<TabControl>
+	    <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel Height="20" Grid.Row="0">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File">
+                    <MenuItem x:Name="miRetainValues" Header="Retain Field Values After Saving" IsCheckable="True" IsChecked="True"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <Grid Grid.Row="1">
+	        <TabControl>
         <# 
-
+		PushIndent("    ");
 		const int Margin = 5;
 
 		var tables = GetTables(); 
@@ -85,7 +97,7 @@
 			// Create the data entry elements for each column
 			foreach (var column in table.Columns)
 			{
-				WriteLine($"    <Label Content=\"{column.CleanName}\" Grid.Row=\"{row}\" Grid.Column=\"0\" Margin=\"{Margin},{Margin},{Margin},{Margin}\"/>");
+				WriteLine($"    <Label Content=\"{column.UIShortCutName}\" Target=\"{{Binding ElementName={column.UIElementName}}}\" Grid.Row=\"{row}\" Grid.Column=\"0\" Margin=\"{Margin},{Margin},{Margin},{Margin}\"/>");
 
 				if (column.IsPrimaryKey)
 				{
@@ -122,10 +134,12 @@
             WriteLine("</TabItem>");
 			PopIndent();
 			WriteLine("");
+			PopIndent();
 		}
 
 		#>
 		        
-	</TabControl>
+		</TabControl>
+		</Grid>
     </Grid>
 </Window>

@@ -8,56 +8,68 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-	<TabControl>
-        <TabItem x:Name="tabPerson" Header="Person" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
-    <Grid Grid.Row="0" Background="#FFE5E5E5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
+	    <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition />
         </Grid.RowDefinitions>
+        <DockPanel Height="20" Grid.Row="0">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File">
+                    <MenuItem x:Name="miRetainValues" Header="Retain Field Values After Saving" IsCheckable="True" IsChecked="True"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <Grid Grid.Row="1">
+	        <TabControl>
+        <TabItem x:Name="tabPerson" Header="Person" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
         <Grid Grid.Row="0" Background="#FFE5E5E5">
-            <DataGrid x:Name="dgPerson" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
-                    <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
-                    <DataGridTextColumn Header="Hometown" IsReadOnly="True" Binding="{Binding Hometown}" Width="1*" />
-                    <DataGridTextColumn Header="Height Cm" IsReadOnly="True" Binding="{Binding HeightCm}" Width="1*" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-        <Grid Grid.Row="1" Background="#FFE5E5E5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="3*"/>
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="#FFE5E5E5">
+                <DataGrid x:Name="dgPerson" Margin="5,5,5,5" KeyUp="DataGrid_KeyUp" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown" SelectionChanged="Person_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" Width="1*" />
+                        <DataGridTextColumn Header="Age" IsReadOnly="True" Binding="{Binding Age}" Width="1*" />
+                        <DataGridTextColumn Header="Hometown" IsReadOnly="True" Binding="{Binding Hometown}" Width="1*" />
+                        <DataGridTextColumn Header="Height Cm" IsReadOnly="True" Binding="{Binding HeightCm}" Width="1*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            <Grid Grid.Row="1" Background="#FFE5E5E5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
 
-            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbPerson_PersonId" Margin="5,5,5,5" KeyUp="Person_KeyUp" IsEditable="False" />
+                <Label Content="PersonId" Target="{Binding ElementName=cbPerson_PersonId}" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbPerson_PersonId" Margin="5,5,5,5" KeyUp="Person_KeyUp" IsEditable="False" />
 
-            <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbPerson_Name" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+                <Label Content="Name" Target="{Binding ElementName=cbPerson_Name}" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbPerson_Name" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Age" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbPerson_Age" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+                <Label Content="Age" Target="{Binding ElementName=cbPerson_Age}" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbPerson_Age" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Hometown" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbPerson_Hometown" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+                <Label Content="Hometown" Target="{Binding ElementName=cbPerson_Hometown}" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbPerson_Hometown" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Height Cm" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
-            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbPerson_HeightCm" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
+                <Label Content="HeightCm" Target="{Binding ElementName=cbPerson_HeightCm}" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbPerson_HeightCm" KeyUp="Person_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Button Grid.Row="5" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
-        </Grid>
-        </Grid>
-    </TabItem>
+                <Button Grid.Row="5" Grid.Column="1" x:Name="btnPerson_Save" Margin="5,5,5,5" Content="Save" Click="Person_Click" />
+            </Grid>
+            </Grid>
+        </TabItem>
 
 <TabItem x:Name="tabCompany" Header="Company" HorizontalAlignment="Left" Height="20" Margin="0" VerticalAlignment="Top">
     <Grid Grid.Row="0" Background="#FFE5E5E5">
@@ -87,16 +99,16 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Company Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="CompanyId" Target="{Binding ElementName=cbCompany_CompanyId}" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbCompany_CompanyId" Margin="5,5,5,5" KeyUp="Company_KeyUp" IsEditable="False" />
 
-            <Label Content="Name" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="Name" Target="{Binding ElementName=cbCompany_Name}" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbCompany_Name" KeyUp="Company_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Stock Symbol" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="StockSymbol" Target="{Binding ElementName=cbCompany_StockSymbol}" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbCompany_StockSymbol" KeyUp="Company_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Founded" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="Founded" Target="{Binding ElementName=dtCompany_Founded}" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
             <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dtCompany_Founded" KeyUp="Company_KeyUp" Margin="5,5,5,5" />
 
             <Button Grid.Row="4" Grid.Column="1" x:Name="btnCompany_Save" Margin="5,5,5,5" Content="Save" Click="Company_Click" />
@@ -133,16 +145,16 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="PersonId" Target="{Binding ElementName=cbEmployee_PersonId}" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbEmployee_PersonId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
 
-            <Label Content="Company Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="CompanyId" Target="{Binding ElementName=cbEmployee_CompanyId}" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbEmployee_CompanyId" Margin="5,5,5,5" KeyUp="Employee_KeyUp" IsEditable="False" />
 
-            <Label Content="Title" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="Title" Target="{Binding ElementName=cbEmployee_Title}" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbEmployee_Title" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Office Number" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="OfficeNumber" Target="{Binding ElementName=cbEmployee_OfficeNumber}" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee_OfficeNumber" KeyUp="Employee_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
             <Button Grid.Row="4" Grid.Column="1" x:Name="btnEmployee_Save" Margin="5,5,5,5" Content="Save" Click="Employee_Click" />
@@ -179,16 +191,16 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Person Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="PersonId" Target="{Binding ElementName=cbTenure_PersonId}" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbTenure_PersonId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />
 
-            <Label Content="Company Id" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="CompanyId" Target="{Binding ElementName=cbTenure_CompanyId}" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbTenure_CompanyId" Margin="5,5,5,5" KeyUp="Tenure_KeyUp" IsEditable="False" />
 
-            <Label Content="Start Date" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="StartDate" Target="{Binding ElementName=dtTenure_StartDate}" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
             <DatePicker Grid.Row="2" Grid.Column="1" x:Name="dtTenure_StartDate" KeyUp="Tenure_KeyUp" Margin="5,5,5,5" />
 
-            <Label Content="End Date" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="EndDate" Target="{Binding ElementName=dtTenure_EndDate}" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
             <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dtTenure_EndDate" KeyUp="Tenure_KeyUp" Margin="5,5,5,5" />
 
             <Button Grid.Row="4" Grid.Column="1" x:Name="btnTenure_Save" Margin="5,5,5,5" Content="Save" Click="Tenure_Click" />
@@ -230,25 +242,25 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Car Id" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="CarId" Target="{Binding ElementName=cbCar_CarId}" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbCar_CarId" Margin="5,5,5,5" KeyUp="Car_KeyUp" IsEditable="True" />
 
-            <Label Content="Make" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="_Make" Target="{Binding ElementName=cbCar_Make}" Grid.Row="1" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbCar_Make" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Model" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="M_odel" Target="{Binding ElementName=cbCar_Model}" Grid.Row="2" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbCar_Model" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Year" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="_Year" Target="{Binding ElementName=cbCar_Year}" Grid.Row="3" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbCar_Year" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="True" />
 
-            <Label Content="Person Id" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="_PersonId" Target="{Binding ElementName=cbCar_PersonId}" Grid.Row="4" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbCar_PersonId" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="False" />
 
-            <Label Content="Company Id" Grid.Row="5" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="_CompanyId" Target="{Binding ElementName=cbCar_CompanyId}" Grid.Row="5" Grid.Column="0" Margin="5,5,5,5"/>
             <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbCar_CompanyId" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsEditable="False" />
 
-            <Label Content="Is Manual Transmission" Grid.Row="6" Grid.Column="0" Margin="5,5,5,5"/>
+            <Label Content="IsManual_Transmission" Target="{Binding ElementName=cbCar_IsManualTransmission}" Grid.Row="6" Grid.Column="0" Margin="5,5,5,5"/>
             <CheckBox Grid.Row="6" Grid.Column="1" x:Name="cbCar_IsManualTransmission" KeyUp="Car_KeyUp" Margin="5,5,5,5" IsThreeState="False" />
 
             <Button Grid.Row="7" Grid.Column="1" x:Name="btnCar_Save" Margin="5,5,5,5" Content="Save" Click="Car_Click" />
@@ -257,6 +269,7 @@
     </TabItem>
 
 		        
-	</TabControl>
+		</TabControl>
+		</Grid>
     </Grid>
 </Window>

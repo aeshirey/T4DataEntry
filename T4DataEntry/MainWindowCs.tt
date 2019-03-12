@@ -543,6 +543,9 @@ foreach (var table in tables)
 		WriteLine("UserDB.InsertOrReplace(record);");
 		WriteLine($"Load{table.Name}();");
 		WriteLine("");
+		WriteLine("if (!miRetainValues.IsChecked)");
+		WriteLine("{");
+		PushIndent("    ");
 		WriteLine("// clear input elements");
 
 		foreach (var column in table.Columns)
@@ -572,6 +575,9 @@ foreach (var table in tables)
 					break;
 			}
 		}
+
+		PopIndent();
+		WriteLine("}");
 
 		PopIndent();
 		WriteLine("}");
